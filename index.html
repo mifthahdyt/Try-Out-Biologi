@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADVANCED ENGLISH V3 - SMAN 10 SINJAI</title>
+    <title>ENGLISH EXAM V3 - SMAN 10 SINJAI</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Merriweather:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0a0c10;
+            --bg: #0d1117;
             --card: #161b22;
             --accent: #f0f6fc;
             --text-p: #8b949e;
@@ -71,9 +71,9 @@
         .option:hover { border-color: #8b949e; }
         .option.selected { border-color: var(--accent); background: #30363d; }
 
-        /* States for correctness */
-        .option.correct-visual { background: var(--correct) !important; color: white !important; border-color: var(--correct) !important; font-weight: 600; }
-        .option.wrong-visual { background: var(--wrong) !important; color: white !important; border-color: var(--wrong) !important; font-weight: 600; }
+        /* Status colors */
+        .correct-ans { background: var(--correct) !important; color: white !important; border-color: var(--correct) !important; font-weight: 700; }
+        .wrong-ans { background: var(--wrong) !important; color: white !important; border-color: var(--wrong) !important; font-weight: 700; }
 
         .btn-main {
             width: 100%;
@@ -87,7 +87,7 @@
             margin-top: 25px;
         }
 
-        .explanation {
+        .explanation-box {
             margin-top: 20px;
             padding: 15px;
             border-radius: 10px;
@@ -96,22 +96,22 @@
             display: none;
             border: 1px solid var(--border);
             line-height: 1.5;
+            animation: slideDown 0.3s ease;
         }
 
-        .progress-bar { width: 100%; height: 4px; background: #30363d; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .eval-item { text-align: left; padding: 15px; border-bottom: 1px solid var(--border); font-size: 13px; }
-        .eval-item b { color: var(--wrong); }
+        .progress-bar { width: 100%; height: 4px; background: #30363d; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <div id="sc-start" class="glass-card active" style="text-align: center;">
-        <h1 style="font-size: 2rem;">English Proficiency V3</h1>
-        <p style="color: var(--text-p);">SMAN 10 SINJAI • 2026 Academic Year</p>
-        <button class="btn-main" onclick="startApp()">START EXAM</button>
+        <h1 style="font-size: 2.2rem; letter-spacing: -1px;">English Final Exam</h1>
+        <p style="color: var(--text-p); margin-bottom: 30px;">Tingkat Lanjut • SMAN 10 SINJAI • 2026</p>
+        <button class="btn-main" onclick="startExam()">Mulai Ujian Sekarang</button>
     </div>
 
     <div id="sc-quiz" class="glass-card">
@@ -122,106 +122,101 @@
         <div class="progress-bar"><div id="p-fill" class="progress-fill"></div></div>
         
         <div id="quiz-body"></div>
-        <div id="expl-box" class="explanation"></div>
+        <div id="expl-box" class="explanation-box"></div>
         
         <button id="btn-next" class="btn-main" onclick="handleFlow()">CHECK ANSWER</button>
     </div>
 
     <div id="sc-result" class="glass-card" style="text-align: center;">
-        <span class="q-badge">Final Score</span>
-        <div id="final-score" style="font-size: 5rem; font-weight: 800; margin: 10px 0;">0</div>
-        <p id="time-taken" style="color: var(--text-p); margin-bottom: 30px;"></p>
-        
-        <div id="evaluation-list" style="max-height: 250px; overflow-y: auto; background: #0d1117; border-radius: 12px; margin-bottom: 20px;"></div>
-        
-        <button class="btn-main" onclick="location.reload()">TRY AGAIN</button>
+        <span class="q-badge">Selesai</span>
+        <div id="final-score" style="font-size: 5.5rem; font-weight: 800; margin: 10px 0;">0</div>
+        <p id="summary-msg" style="color: var(--text-p); margin-bottom: 30px;"></p>
+        <button class="btn-main" onclick="location.reload()">Ulangi Ujian</button>
     </div>
 </div>
 
 <script>
-// Database soal tetap 50 nomor sesuai input sebelumnya
 const questions = [
-    { text: "The school library is a quiet and comfortable place. Students can borrow books, read novels, and study after class. Many students like it because it helps them learn in a calm environment.", q: "What is the main idea of the text?", opts: ["The school library is only for teachers.", "The school library is a quiet and useful place for students.", "Students should never visit the library.", "The library is used for sports activities.", "The library is always noisy."], ans: 1, exp: "Main idea is library being quiet & useful." },
-    { q: "What can students do in the library?", opts: ["Borrow books", "Cook food", "Watch movies", "Play football", "Sleep during class"], ans: 0, exp: "Mentioned: Borrow books, read novels, study." },
-    { q: "In the sentence “Many students like it,” the word “it” refers to ...", opts: ["class", "teacher", "library", "book", "novel"], ans: 2, exp: "It refers to the school library." },
-    { text: "Last Sunday, Nisa and her family went to the beach. After arriving, they spread a mat, ate breakfast, and watched the waves. Nisa felt very happy because the sea breeze was fresh and the scenery was beautiful.", q: "What is the purpose of the text?", opts: ["To give instructions", "To tell a past event", "To compare two places", "To persuade readers", "To explain a process"], ans: 1, exp: "Recount text tells about past experience." },
-    { q: "What did Nisa and her family do after arriving at the beach?", opts: ["They played basketball.", "They spread a mat and ate breakfast.", "They bought new books.", "They cleaned the classroom.", "They went home immediately."], ans: 1, exp: "They spread a mat and had breakfast." },
-    { q: "The word “happy” is closest in meaning to ...", opts: ["sad", "angry", "pleased", "tired", "afraid"], ans: 2, exp: "Happy = Pleased." },
-    { text: "Rafi found a small bird with a hurt wing. He brought it home, cleaned the wound, and fed it carefully. Two days later, the bird could fly again. Rafi released it near a tree and smiled.", q: "What can we infer about Rafi?", opts: ["He is careless", "He is kind and helpful", "He is lazy", "He is angry", "He is rude"], ans: 1, exp: "His actions show kindness." },
-    { q: "What is the moral value of the story?", opts: ["Do not help animals", "Helping others is good", "Birds stay in cages", "Ignore injured animals", "Flying is dangerous"], ans: 1, exp: "Message: Helping others is a good deed." },
-    { q: "In the sentence “He brought it home,” the word “it” refers to ...", opts: ["the tree", "the wing", "the bird", "the wound", "the house"], ans: 2, exp: "It refers to the bird." },
-    { text: "1. Boil water. 2. Put tea bags into a glass. 3. Add sugar and hot water. 4. Stir well. 5. Add ice cubes before serving.", q: "What is the first step in the procedure?", opts: ["Add ice cubes", "Stir well", "Put tea bags", "Boil water", "Add sugar"], ans: 3, exp: "First step is boiling water." },
-    { q: "What is the purpose of the text?", opts: ["To tell a story", "To explain how to make iced tea", "To describe a beach", "To invite someone", "To give an opinion"], ans: 1, exp: "Procedure text explains steps." },
-    { q: "The word “stir” means ...", opts: ["freeze", "mix", "taste", "break", "pour"], ans: 1, exp: "Stir = Mix." },
-    { text: "Reading every day is very beneficial. First, it improves vocabulary. Second, it helps students understand texts more easily. Therefore, students should make reading a habit.", q: "What is the main opinion of the writer?", opts: ["Reading is useless", "Reading every day is beneficial", "Stop reading", "Vocabulary is not important", "Texts are always easy"], ans: 1, exp: "The writer thinks reading is useful." },
-    { q: "Which sentence is a supporting reason?", opts: ["Reading every day is beneficial.", "Therefore, make reading a habit.", "It improves vocabulary.", "Reading is boring.", "Students should not read."], ans: 2, exp: "Improves vocabulary is one of the reasons." },
-    { q: "The word “beneficial” is closest in meaning to ...", opts: ["harmful", "useful", "expensive", "silent", "difficult"], ans: 1, exp: "Beneficial = Useful." },
-    { text: "Announcement: School Meeting on Friday, 10 April 2026, at 10 a.m. in the hall. Please bring notebooks.", q: "What is the purpose of the announcement?", opts: ["Tell a joke", "To inform about a meeting", "Invite to party", "Give a recipe", "Describe person"], ans: 1, exp: "Provides info about a meeting." },
-    { q: "When will the meeting be held?", opts: ["Monday", "Friday, 10 April 2026", "Sunday", "Saturday", "Next month"], ans: 1, exp: "Time mentioned clearly in text." },
-    { q: "Who must attend the meeting?", opts: ["All students", "All class representatives", "All parents", "All teachers", "Janitor"], ans: 1, exp: "Specific for class representatives." },
-    { text: "Dear Dina, You are invited to my 17th birthday party this Saturday at 4 p.m. at my house. Love, Sarah", q: "What is the purpose of the text?", opts: ["Report event", "Invite Dina", "Explain rules", "Give directions", "Ask for help"], ans: 1, exp: "It's an invitation." },
-    { q: "Where will the party take place?", opts: ["School", "Restaurant", "Sarah's house", "Library", "Beach"], ans: 2, exp: "At Sarah's house." },
-    { q: "The phrase “my family and me” refers to ...", opts: ["Dina", "Sarah and her family", "Teachers", "Classmates", "Guests"], ans: 1, exp: "Me refers to Sarah." },
-    { q: "Teacher: Have you finished? Student: Not yet. I was sick. Teacher: ___", opts: ["I am sorry. Submit it tomorrow.", "I don't care.", "Submit last month.", "Don't study.", "Leave school."], ans: 0, exp: "Shows empathy." },
-    { q: "What does the teacher show in the dialogue?", opts: ["Anger", "Concern and flexibility", "Confusion", "Laziness", "Fear"], ans: 1, exp: "Shows kindness and adjustment." },
-    { q: "She ___ to school every day.", opts: ["goes", "go", "going", "went", "gone"], ans: 0, exp: "Present simple for she: goes." },
-    { q: "They ___ the museum yesterday.", opts: ["visit", "visits", "visited", "visiting", "will visit"], ans: 2, exp: "Yesterday = Past V2." },
-    { q: "We ___ a science project next week.", opts: ["will do", "did", "do", "are did", "doing"], ans: 0, exp: "Next week = Future." },
-    { q: "The windows ___ by the janitor every morning.", opts: ["clean", "cleans", "are cleaned", "cleaned", "is cleaned"], ans: 2, exp: "Passive: Windows (plural) + are cleaned." },
-    { q: "This bag is ___ than that one.", opts: ["heavy", "heavier", "highest", "more heavy", "most heavy"], ans: 1, exp: "Comparative: heavier." },
-    { q: "He is the ___ player in the team.", opts: ["good", "better", "best", "well", "more good"], ans: 2, exp: "Superlative: best." },
-    { q: "You ___ finish your homework before playing.", opts: ["must", "might", "can", "would", "could"], ans: 0, exp: "Must shows obligation." },
-    { q: "The students ___ in the classroom.", opts: ["is", "are", "was", "be", "am"], ans: 1, exp: "Students (plural) = are." },
-    { q: "Rina left early because ___ was tired.", opts: ["he", "they", "she", "it", "we"], ans: 2, exp: "Rina = she." },
-    { q: "I studied hard ___ I could pass the test.", opts: ["because", "so that", "although", "unless", "since"], ans: 1, exp: "So that shows purpose." },
-    { q: "___ it was late, he continued studying.", opts: ["Because", "So", "Although", "If", "Until"], ans: 2, exp: "Although shows contrast." },
-    { q: "The word “crucial” means ...", opts: ["important", "weak", "late", "noisy", "simple"], ans: 0, exp: "Crucial = Very important." },
-    { q: "The word “borrow” means ...", opts: ["give forever", "take and return", "buy", "destroy", "hide"], ans: 1, exp: "Borrow = temporary take." },
-    { q: "The word “carefully” means ...", opts: ["quickly", "with attention", "loudly", "carelessly", "late"], ans: 1, exp: "Carefully = with focus." },
-    { q: "He was late; ___, he apologized.", opts: ["however", "therefore", "although", "because", "unless"], ans: 1, exp: "Therefore = because of that." },
-    { q: "The door ___ every night.", opts: ["lock", "locks", "is locked", "locked", "locking"], ans: 2, exp: "Passive: is locked." },
-    { q: "Our teacher told ___ to work in pairs.", opts: ["we", "us", "our", "ours", "ourselves"], ans: 1, exp: "Object pronoun: us." },
-    { q: "The main idea of a paragraph is the ...", opts: ["longest sentence", "central message", "last word", "difficult vocabulary", "title only"], ans: 1, exp: "Core message of the text." },
-    { q: "A recount text tells about ...", opts: ["recipe", "past events", "rule", "argument", "future"], ans: 1, exp: "Recount = Past events." },
-    { q: "An announcement is made to ...", opts: ["tell secret", "inform many people", "describe place", "tell story", "ask cook"], ans: 1, exp: "Public information." },
-    { q: "Social function of procedure text is to ...", opts: ["explain steps", "tell legend", "compare", "express feelings", "give news"], ans: 0, exp: "Explain how to do things." },
-    { q: "In analytical exposition, the writer gives ...", opts: ["only story", "opinion and reasons", "recipe", "names", "dialogue"], ans: 1, exp: "Thesis and arguments." },
-    { q: "Which question asks for a detail in a text?", opts: ["What is main idea?", "Why writer write?", "When does meeting start?", "Moral value?", "Opinion?"], ans: 2, exp: "When asks for specific detail." },
-    { q: "Which word shows sequence in a procedure text?", opts: ["first", "because", "although", "however", "since"], ans: 0, exp: "First/Next/Then are sequences." },
-    { q: "Which sentence is correct?", opts: ["My friend and I are going", "My friend and I is going", "Friend and me are", "I am going", "I going"], ans: 0, exp: "Subject + plural be." },
-    { q: "The students took their books. “Their” refers to ...", opts: ["books", "students", "teacher", "class", "lesson"], ans: 1, exp: "Their = students' books." },
-    { q: "“Could you repeat that, please?” is used to ...", opts: ["answer", "ask say again", "end", "invite", "command"], ans: 1, exp: "Asking for repetition." }
+    { text: "The school library is a quiet and comfortable place. Students can borrow books, read novels, and study after class. Many students like it because it helps them learn in a calm environment.", q: "What is the main idea of the text?", opts: ["The school library is only for teachers.", "The school library is a quiet and useful place for students.", "Students should never visit the library.", "The library is used for sports activities.", "The library is always noisy."], ans: 1, exp: "Teks menjelaskan perpustakaan sebagai tempat yang tenang dan berguna bagi siswa untuk belajar." },
+    { q: "What can students do in the library?", opts: ["Borrow books", "Cook food", "Watch movies", "Play football", "Sleep during class"], ans: 0, exp: "Kalimat kedua menyebutkan bahwa siswa dapat meminjam buku (borrow books)." },
+    { q: "In the sentence “Many students like it,” the word “it” refers to ...", opts: ["class", "teacher", "library", "book", "novel"], ans: 2, exp: "Kata 'it' menggantikan subjek utama yaitu 'the school library'." },
+    { text: "Last Sunday, Nisa and her family went to the beach. After arriving, they spread a mat, ate breakfast, and watched the waves. Nisa felt very happy because the sea breeze was fresh and the scenery was beautiful.", q: "What is the purpose of the text?", opts: ["To give instructions", "To tell a past event", "To compare two places", "To persuade readers", "To explain a process"], ans: 1, exp: "Teks ini adalah recount text yang menceritakan pengalaman masa lalu (last Sunday)." },
+    { q: "What did Nisa and her family do after arriving at the beach?", opts: ["They played basketball.", "They spread a mat and ate breakfast.", "They bought new books.", "They cleaned the classroom.", "They went home immediately."], ans: 1, exp: "Sesuai teks: 'they spread a mat, ate breakfast'." },
+    { q: "The word “happy” is closest in meaning to ...", opts: ["sad", "angry", "pleased", "tired", "afraid"], ans: 2, exp: "Happy (senang) memiliki arti yang sama dengan pleased (puas/senang)." },
+    { text: "Rafi found a small bird with a hurt wing. He brought it home, cleaned the wound, and fed it carefully. Two days later, the bird could fly again. Rafi released it near a tree and smiled.", q: "What can we infer about Rafi?", opts: ["He is careless", "He is kind and helpful", "He is lazy", "He is angry", "He is rude"], ans: 1, exp: "Membantu burung yang terluka menunjukkan sifat baik dan suka menolong." },
+    { q: "What is the moral value of the story?", opts: ["Do not help animals", "Helping others is good", "Birds stay in cages", "Ignore injured animals", "Flying is dangerous"], ans: 1, exp: "Pesan moralnya adalah membantu sesama makhluk hidup adalah hal yang baik." },
+    { q: "In the sentence “He brought it home,” the word “it” refers to ...", opts: ["the tree", "the wing", "the bird", "the wound", "the house"], ans: 2, exp: "It merujuk pada 'a small bird' yang ditemukan Rafi." },
+    { text: "1. Boil water. 2. Put tea bags into a glass. 3. Add sugar and hot water. 4. Stir well. 5. Add ice cubes before serving.", q: "What is the first step in the procedure?", opts: ["Add ice cubes", "Stir well", "Put tea bags", "Boil water", "Add sugar"], ans: 3, exp: "Langkah nomor 1 adalah merebus air (boil water)." },
+    { q: "What is the purpose of the text?", opts: ["To tell a story", "To explain how to make iced tea", "To describe a beach", "To invite someone", "To give an opinion"], ans: 1, exp: "Teks prosedur bertujuan menjelaskan langkah pembuatan sesuatu." },
+    { q: "The word “stir” means ...", opts: ["freeze", "mix", "taste", "break", "pour"], ans: 1, exp: "Stir berarti mengaduk, yang tujuannya adalah mencampur (mix)." },
+    { text: "Reading every day is very beneficial. First, it improves vocabulary. Second, it helps students understand texts more easily. Therefore, students should make reading a habit.", q: "What is the main opinion of the writer?", opts: ["Reading is useless", "Reading every day is beneficial", "Students should stop reading", "Vocabulary is not important", "Texts are always easy"], ans: 1, exp: "Penulis berpendapat bahwa membaca setiap hari sangat bermanfaat (beneficial)." },
+    { q: "Which sentence is a supporting reason?", opts: ["Reading every day is very beneficial.", "Therefore, students should make reading a habit.", "It improves vocabulary.", "Reading is boring.", "Students should not read."], ans: 2, exp: "Meningkatkan kosakata adalah salah satu alasan pendukung opini penulis." },
+    { q: "The word “beneficial” is closest in meaning to ...", opts: ["harmful", "useful", "expensive", "silent", "difficult"], ans: 1, exp: "Beneficial berarti bermanfaat atau berguna (useful)." },
+    { text: "Announcement: School Meeting on Friday, 10 April 2026, at 10 a.m. in the school hall. Please bring your notebooks.", q: "What is the purpose of the announcement?", opts: ["To tell a joke", "To inform students about a meeting", "To invite people to a party", "To give a recipe", "To describe a person"], ans: 1, exp: "Pengumuman bertujuan memberi informasi tentang rapat sekolah." },
+    { q: "When will the meeting be held?", opts: ["Monday", "Friday, 10 April 2026", "Sunday", "Saturday", "Next month"], ans: 1, exp: "Sesuai teks: Friday, 10 April 2026." },
+    { q: "Who must attend the meeting?", opts: ["All students", "All class representatives", "All parents", "All teachers", "Janitor"], ans: 1, exp: "Teks menyebutkan 'All class representatives' (seluruh perwakilan kelas)." },
+    { text: "Dear Dina, You are invited to my 17th birthday party this Saturday at 4 p.m. at my house. Love, Sarah", q: "What is the purpose of the text?", opts: ["To report an event", "To invite Dina to a birthday party", "To explain rules", "To give directions", "To ask for homework"], ans: 1, exp: "Ini adalah teks undangan (invitation) untuk ulang tahun." },
+    { q: "Where will the party take place?", opts: ["At Dina’s school", "At a restaurant", "At Sarah’s house", "In the library", "At the beach"], ans: 2, exp: "Lokasi pesta adalah 'at my house' (rumah Sarah)." },
+    { q: "The phrase “my family and me” refers to ...", opts: ["Dina only", "Sarah and her family", "Sarah’s teachers", "Sarah’s classmates only", "The guests only"], ans: 1, exp: "'Me' dalam teks adalah pengirim surat, yaitu Sarah." },
+    { q: "Teacher: Have you finished the assignment? Student: Not yet. Teacher: ___", opts: ["I am sorry to hear that. Submit it tomorrow.", "I do not care.", "Submit last month.", "Never study.", "Not your school."], ans: 0, exp: "Respon yang paling sopan dan logis adalah memberikan toleransi waktu." },
+    { q: "What does the teacher show in the dialogue?", opts: ["Anger", "Concern and flexibility", "Confusion", "Laziness", "Fear"], ans: 1, exp: "Guru menunjukkan perhatian (concern) dan kelenturan (flexibility) waktu." },
+    { q: "She ___ to school every day.", opts: ["goes", "go", "going", "went", "gone"], ans: 0, exp: "Simple Present untuk subjek tunggal 'She' adalah 'goes'." },
+    { q: "They ___ the museum yesterday.", opts: ["visit", "visits", "visited", "visiting", "will visit"], ans: 2, exp: "Kata 'yesterday' menunjukkan masa lampau (V2: visited)." },
+    { q: "We ___ a science project next week.", opts: ["will do", "did", "do", "are did", "doing"], ans: 0, exp: "Next week menunjukkan masa depan (future) menggunakan 'will'." },
+    { q: "The windows ___ by the janitor every morning.", opts: ["clean", "cleans", "are cleaned", "cleaned", "is cleaned"], ans: 2, exp: "Kalimat pasif jamak (windows) menggunakan 'are + V3'." },
+    { q: "This bag is ___ than that one.", opts: ["heavy", "heavier", "highest", "more heavy", "most heavy"], ans: 1, exp: "Perbandingan dua benda (comparative) menggunakan 'heavier'." },
+    { q: "He is the ___ player in the team.", opts: ["good", "better", "best", "well", "more good"], ans: 2, exp: "Superlatif (paling) dari 'good' adalah 'the best'." },
+    { q: "You ___ finish your homework before playing.", opts: ["must", "might", "can", "would", "could"], ans: 0, exp: "Must digunakan untuk menunjukkan kewajiban/keharusan." },
+    { q: "The students ___ in the classroom.", opts: ["is", "are", "was", "be", "am"], ans: 1, exp: "Subjek jamak (students) menggunakan to-be 'are'." },
+    { q: "Rina left early because ___ was tired.", opts: ["he", "they", "she", "it", "we"], ans: 2, exp: "Kata ganti untuk Rina (perempuan) adalah 'she'." },
+    { q: "I studied hard ___ I could pass the test.", opts: ["because", "so that", "although", "unless", "since"], ans: 1, exp: "'So that' digunakan untuk menunjukkan tujuan (supaya/agar)." },
+    { q: "___ it was late, he continued studying.", opts: ["Because", "So", "Although", "If", "Until"], ans: 2, exp: "'Although' (meskipun) menunjukkan pertentangan." },
+    { q: "The word “crucial” is closest in meaning to ...", opts: ["important", "weak", "late", "noisy", "simple"], ans: 0, exp: "Crucial artinya sangat penting (important)." },
+    { q: "The word “borrow” means ...", opts: ["give forever", "take for a short time and return", "buy", "destroy", "hide"], ans: 1, exp: "Borrow artinya meminjam (ambil sementara lalu dikembalikan)." },
+    { q: "The word “carefully” means ...", opts: ["quickly", "with attention", "loudly", "carelessly", "late"], ans: 1, exp: "Carefully artinya dengan penuh perhatian (with attention)." },
+    { q: "He was late; ___, he apologized.", opts: ["however", "therefore", "although", "because", "unless"], ans: 1, exp: "Therefore digunakan untuk menunjukkan akibat (oleh karena itu)." },
+    { q: "The door ___ every night.", opts: ["lock", "locks", "is locked", "locked", "locking"], ans: 2, exp: "Kalimat pasif tunggal: 'is locked'." },
+    { q: "Our teacher told ___ to work in pairs.", opts: ["we", "us", "our", "ours", "ourselves"], ans: 1, exp: "Objek pronoun untuk 'we' adalah 'us'." },
+    { q: "The main idea of a paragraph is the ...", opts: ["longest sentence", "central message", "last word", "difficult vocabulary", "title only"], ans: 1, exp: "Ide utama adalah pesan pusat/inti dari paragraf." },
+    { q: "A recount text tells about ...", opts: ["a recipe", "past events", "a rule", "an argument", "plans"], ans: 1, exp: "Recount text berfungsi menceritakan kejadian masa lalu." },
+    { q: "An announcement is made to ...", opts: ["tell a secret", "inform many people", "describe a place", "tell a story", "ask help"], ans: 1, exp: "Pengumuman dibuat untuk menginformasikan orang banyak." },
+    { q: "The social function of a procedure text is to ...", opts: ["explain steps", "tell a legend", "compare objects", "express feelings", "give news"], ans: 0, exp: "Teks prosedur menjelaskan langkah-langkah melakukan sesuatu." },
+    { q: "In analytical exposition, the writer gives ...", opts: ["only a story", "an opinion and reasons", "a recipe", "a list of names", "a dialogue"], ans: 1, exp: "Teks ini berisi opini penulis beserta argumen/alasannya." },
+    { q: "Which question asks for a detail in a text?", opts: ["What is the main idea?", "Why does the writer write?", "When does the meeting start?", "What is the moral value?", "What is the opinion?"], ans: 2, exp: "Pertanyaan 'When' (Kapan) menanyakan informasi detail waktu." },
+    { q: "Which word shows sequence in a procedure text?", opts: ["first", "because", "although", "however", "since"], ans: 0, exp: "First, second, then, dll adalah kata urutan." },
+    { q: "Which sentence is correct?", opts: ["My friend and I are going", "My friend and I is going", "Friend and me are", "I am going", "I going"], ans: 0, exp: "Subjek jamak 'My friend and I' menggunakan 'are'." },
+    { q: "The students took their books. The word “their” refers to ...", opts: ["the books", "the students", "the teacher", "the classroom", "the lesson"], ans: 1, exp: "Their adalah kata ganti kepemilikan untuk 'the students'." },
+    { q: "“Could you repeat that, please?” is used to ...", opts: ["answer", "ask someone to say again", "end conversation", "make invitation", "give command"], ans: 1, exp: "Ungkapan ini digunakan untuk meminta pengulangan kata." }
 ];
 
-let curIndex = 0, score = 0, time = 0, timerActive = false, selectedIdx = -1;
-let missed = [];
+let curIdx = 0, score = 0, time = 0, timerOn = false, selectedIdx = -1;
 
-function startApp() {
+function startExam() {
     document.getElementById('sc-start').classList.remove('active');
     document.getElementById('sc-quiz').classList.add('active');
-    timerActive = true;
-    setInterval(() => { if(timerActive) { time++; updateMeta(); } }, 1000);
+    timerOn = true;
+    setInterval(() => { if(timerOn) { time++; updateUI(); } }, 1000);
     renderQuestion();
 }
 
-function updateMeta() {
+function updateUI() {
     let m = Math.floor(time/60).toString().padStart(2,'0');
     let s = (time%60).toString().padStart(2,'0');
     document.getElementById('timer').innerText = `${m}:${s}`;
-    document.getElementById('q-counter').innerText = `Question ${curIndex+1}/${questions.length}`;
-    document.getElementById('p-fill').style.width = `${((curIndex+1)/questions.length)*100}%`;
+    document.getElementById('q-counter').innerText = `Question ${curIdx+1}/${questions.length}`;
+    document.getElementById('p-fill').style.width = `${((curIdx+1)/questions.length)*100}%`;
 }
 
 function renderQuestion() {
-    const q = questions[curIndex], body = document.getElementById('quiz-body');
-    let html = '';
-    if(q.text) html += `<div class="reading-section">${q.text}</div>`;
-    html += `<h2>${q.q}</h2><div class="opt-grid">`;
+    const q = questions[curIdx], body = document.getElementById('quiz-body');
+    let h = '';
+    if(q.text) h += `<div class="reading-section">${q.text}</div>`;
+    h += `<h2>${q.q}</h2><div class="opt-grid">`;
     q.opts.forEach((o, i) => {
-        html += `<div class="option" onclick="selectOpt(${i})">${o}</div>`;
+        h += `<div class="option" onclick="selectOpt(${i})">${o}</div>`;
     });
-    html += `</div>`;
-    body.innerHTML = html;
+    h += `</div>`;
+    body.innerHTML = h;
     document.getElementById('expl-box').style.display = 'none';
     document.getElementById('btn-next').innerText = "CHECK ANSWER";
     selectedIdx = -1;
@@ -238,50 +233,46 @@ function selectOpt(i) {
 function handleFlow() {
     const btn = document.getElementById('btn-next');
     if(btn.innerText === "CHECK ANSWER") {
-        if(selectedIdx === -1) return alert("Please select an answer!");
-        validate();
-        btn.innerText = (curIndex === questions.length-1) ? "SEE RESULT" : "NEXT QUESTION";
+        if(selectedIdx === -1) return alert("Pilih satu jawaban!");
+        checkAns();
+        btn.innerText = (curIdx === questions.length-1) ? "LIHAT HASIL" : "NEXT QUESTION";
     } else {
-        if(curIndex < questions.length-1) {
-            curIndex++;
+        if(curIdx < questions.length-1) {
+            curIdx++;
             renderQuestion();
-            updateMeta();
+            updateUI();
         } else {
             showResult();
         }
     }
 }
 
-function validate() {
-    const q = questions[curIndex], opts = document.querySelectorAll('.option'), expl = document.getElementById('expl-box');
+function checkAns() {
+    const q = questions[curIdx], opts = document.querySelectorAll('.option'), box = document.getElementById('expl-box');
     const isCorrect = (selectedIdx === q.ans);
     
-    opts[q.ans].classList.add('correct-visual');
+    // Warna jawaban benar
+    opts[q.ans].classList.add('correct-ans');
+    
+    // Warna jika salah
     if(!isCorrect) {
-        opts[selectedIdx].classList.add('wrong-visual');
-        missed.push({q: q.q, correct: q.opts[q.ans], why: q.exp});
+        opts[selectedIdx].classList.add('wrong-ans');
     } else {
         score++;
     }
 
-    expl.innerHTML = `<strong>${isCorrect ? 'EXCELLENT!' : 'INCORRECT'}</strong><br>${q.exp}`;
-    expl.style.display = 'block';
+    // Pembahasan
+    box.innerHTML = `<strong>${isCorrect ? 'BENAR!' : 'SALAH!'}</strong><br>${q.exp}`;
+    box.style.display = 'block';
 }
 
 function showResult() {
-    timerActive = false;
+    timerOn = false;
     document.getElementById('sc-quiz').classList.remove('active');
     document.getElementById('sc-result').classList.add('active');
-    
-    const finalScore = Math.round((score/questions.length)*100);
-    document.getElementById('final-score').innerText = finalScore;
-    document.getElementById('time-taken').innerText = `Finished in ${document.getElementById('timer').innerText}`;
-    
-    let evalHtml = missed.length > 0 ? '<p style="padding:15px">Review your mistakes:</p>' : '<p style="padding:15px">Perfect! No mistakes.</p>';
-    missed.forEach(m => {
-        evalHtml += `<div class="eval-item"><b>Question:</b> ${m.q}<br><b>Correct Answer:</b> ${m.correct}<br><small>${m.why}</small></div>`;
-    });
-    document.getElementById('evaluation-list').innerHTML = evalHtml;
+    const final = Math.round((score/questions.length)*100);
+    document.getElementById('final-score').innerText = final;
+    document.getElementById('summary-msg').innerText = `Kamu menjawab ${score} dari ${questions.length} soal dengan benar dalam waktu ${document.getElementById('timer').innerText}.`;
 }
 </script>
 </body>
