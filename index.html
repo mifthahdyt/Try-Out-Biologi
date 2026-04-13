@@ -1,278 +1,239 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENGLISH EXAM V3 - SMAN 10 SINJAI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Merriweather:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <title>ART & CULTURE EXAM - SMAN 10 SINJAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0d1117;
-            --card: #161b22;
-            --accent: #f0f6fc;
-            --text-p: #8b949e;
-            --correct: #238636;
-            --wrong: #da3633;
-            --border: #30363d;
+            --clay: #b45309;
+            --canvas: #fffaf0;
+            --ink: #2d2d2d;
+            --correct: #166534;
+            --wrong: #991b1b;
+            --accent: #d97706;
         }
 
-        * { box-sizing: border-box; transition: all 0.2s ease; }
+        * { box-sizing: border-box; }
         body { 
-            background-color: var(--bg); 
-            color: var(--accent); 
+            background-color: var(--canvas); 
+            color: var(--ink); 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            padding: 20px;
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center;
         }
 
-        .app-container { width: 100%; max-width: 750px; }
+        .container { width: 100%; max-width: 800px; }
 
-        .glass-card { 
-            background: var(--card); 
-            border: 1px solid var(--border); 
-            border-radius: 20px; 
-            padding: 30px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            display: none;
+        .art-card {
+            background: white; border-radius: 20px; padding: 40px;
+            box-shadow: 15px 15px 0px rgba(180, 83, 9, 0.1);
+            border: 2px solid #e5e7eb;
+            display: none; animation: fadeIn 0.6s ease;
         }
-        .active { display: block; animation: fadeIn 0.4s ease; }
+        .active { display: block; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        .reading-section {
-            background: #0d1117;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid var(--accent);
-            margin-bottom: 20px;
-            font-family: 'Merriweather', serif;
-            line-height: 1.7;
-            color: #c9d1d9;
-            font-size: 0.95rem;
+        .header { text-align: center; border-bottom: 3px solid var(--clay); padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { font-family: 'Playfair Display', serif; color: var(--clay); margin: 0; font-size: 1.8rem; }
+        
+        .meta-info { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; color: var(--accent); margin-top: 10px; }
+
+        .question-box { font-size: 1.3rem; font-weight: 600; line-height: 1.6; margin-bottom: 25px; color: #111827; }
+
+        .option-list { display: grid; gap: 15px; }
+        .opt {
+            padding: 18px; border: 2px solid #f3f4f6; border-radius: 12px;
+            cursor: pointer; background: #fafafa; font-size: 1rem;
+            transition: 0.3s; display: flex; align-items: center;
         }
+        .opt:hover { border-color: var(--clay); background: #fffbeb; }
+        .opt.selected { border-color: var(--clay); background: #fef3c7; font-weight: 600; }
 
-        .header-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .q-badge { font-size: 11px; letter-spacing: 1px; color: var(--text-p); text-transform: uppercase; font-weight: 700; }
-        .timer-tag { background: #21262d; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; border: 1px solid var(--border); }
+        .is-correct { background: #dcfce7 !important; border-color: var(--correct) !important; color: var(--correct); }
+        .is-wrong { background: #fee2e2 !important; border-color: var(--wrong) !important; color: var(--wrong); }
 
-        h2 { font-weight: 600; font-size: 1.2rem; margin: 0 0 20px 0; }
-
-        .opt-grid { display: grid; gap: 10px; }
-        .option {
-            background: #21262d;
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
+        .explanation {
+            margin-top: 25px; padding: 20px; border-radius: 12px;
+            background: #fefce8; border-left: 6px solid var(--clay);
+            display: none; font-size: 0.95rem; line-height: 1.6; color: #4b5563;
         }
-        .option:hover { border-color: #8b949e; }
-        .option.selected { border-color: var(--accent); background: #30363d; }
-
-        /* Status colors */
-        .correct-ans { background: var(--correct) !important; color: white !important; border-color: var(--correct) !important; font-weight: 700; }
-        .wrong-ans { background: var(--wrong) !important; color: white !important; border-color: var(--wrong) !important; font-weight: 700; }
 
         .btn-main {
-            width: 100%;
-            padding: 18px;
-            border-radius: 12px;
-            border: none;
-            background: var(--accent);
-            color: #0d1117;
-            font-weight: 800;
-            cursor: pointer;
-            margin-top: 25px;
+            width: 100%; padding: 18px; margin-top: 30px; border: none;
+            border-radius: 12px; background: var(--clay); color: white;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+        .btn-main:hover { background: var(--accent); transform: translateY(-2px); }
 
-        .explanation-box {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 13px;
-            background: #1c2128;
-            display: none;
-            border: 1px solid var(--border);
-            line-height: 1.5;
-            animation: slideDown 0.3s ease;
+        .result-circle {
+            width: 150px; height: 150px; border: 8px solid var(--clay);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 30px auto; font-size: 3rem; font-weight: 800; color: var(--clay);
         }
-
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .progress-bar { width: 100%; height: 4px; background: #30363d; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--accent); width: 0%; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div id="sc-start" class="glass-card active" style="text-align: center;">
-        <h1 style="font-size: 2.2rem; letter-spacing: -1px;">English Final Exam</h1>
-        <p style="color: var(--text-p); margin-bottom: 30px;">Tingkat Lanjut • SMAN 10 SINJAI • 2026</p>
-        <button class="btn-main" onclick="startExam()">Mulai Ujian Sekarang</button>
+<div class="container">
+    <div id="start-screen" class="art-card active" style="text-align: center;">
+        <div style="font-size: 5rem; margin-bottom: 20px;">🎨</div>
+        <h1>GALERI UJIAN SENI BUDAYA</h1>
+        <p>Evaluasi Akhir Semester - 50 Pertanyaan Terkurasi</p>
+        <button class="btn-main" onclick="startApp()">MASUK GALERI SOAL</button>
     </div>
 
-    <div id="sc-quiz" class="glass-card">
-        <div class="header-meta">
-            <span id="q-counter" class="q-badge">Question 1/50</span>
-            <div id="timer" class="timer-tag">00:00</div>
+    <div id="quiz-screen" class="art-card">
+        <div class="header">
+            <h1 id="category-label">SENI RUPA</h1>
+            <div class="meta-info">
+                <span id="q-number">ARTWORK 1/50</span>
+                <span id="timer">00:00</span>
+            </div>
         </div>
-        <div class="progress-bar"><div id="p-fill" class="progress-fill"></div></div>
         
-        <div id="quiz-body"></div>
-        <div id="expl-box" class="explanation-box"></div>
+        <div id="q-text" class="question-box">Memuat pertanyaan...</div>
+        <div id="options" class="option-list"></div>
+
+        <div id="exp-box" class="explanation"></div>
         
-        <button id="btn-next" class="btn-main" onclick="handleFlow()">CHECK ANSWER</button>
+        <button id="action-btn" class="btn-main" onclick="handleAction()">ANALISIS JAWABAN</button>
     </div>
 
-    <div id="sc-result" class="glass-card" style="text-align: center;">
-        <span class="q-badge">Selesai</span>
-        <div id="final-score" style="font-size: 5.5rem; font-weight: 800; margin: 10px 0;">0</div>
-        <p id="summary-msg" style="color: var(--text-p); margin-bottom: 30px;"></p>
-        <button class="btn-main" onclick="location.reload()">Ulangi Ujian</button>
+    <div id="result-screen" class="art-card" style="text-align: center;">
+        <h1>APRESIASI AKHIR</h1>
+        <div class="result-circle" id="final-score">0</div>
+        <p id="feedback-text" style="font-size: 1.2rem; line-height: 1.6;"></p>
+        <button class="btn-main" onclick="location.reload()">RE-INTERPRETASI (ULANG)</button>
     </div>
 </div>
 
 <script>
-const questions = [
-    { text: "The school library is a quiet and comfortable place. Students can borrow books, read novels, and study after class. Many students like it because it helps them learn in a calm environment.", q: "What is the main idea of the text?", opts: ["The school library is only for teachers.", "The school library is a quiet and useful place for students.", "Students should never visit the library.", "The library is used for sports activities.", "The library is always noisy."], ans: 1, exp: "Teks menjelaskan perpustakaan sebagai tempat yang tenang dan berguna bagi siswa untuk belajar." },
-    { q: "What can students do in the library?", opts: ["Borrow books", "Cook food", "Watch movies", "Play football", "Sleep during class"], ans: 0, exp: "Kalimat kedua menyebutkan bahwa siswa dapat meminjam buku (borrow books)." },
-    { q: "In the sentence “Many students like it,” the word “it” refers to ...", opts: ["class", "teacher", "library", "book", "novel"], ans: 2, exp: "Kata 'it' menggantikan subjek utama yaitu 'the school library'." },
-    { text: "Last Sunday, Nisa and her family went to the beach. After arriving, they spread a mat, ate breakfast, and watched the waves. Nisa felt very happy because the sea breeze was fresh and the scenery was beautiful.", q: "What is the purpose of the text?", opts: ["To give instructions", "To tell a past event", "To compare two places", "To persuade readers", "To explain a process"], ans: 1, exp: "Teks ini adalah recount text yang menceritakan pengalaman masa lalu (last Sunday)." },
-    { q: "What did Nisa and her family do after arriving at the beach?", opts: ["They played basketball.", "They spread a mat and ate breakfast.", "They bought new books.", "They cleaned the classroom.", "They went home immediately."], ans: 1, exp: "Sesuai teks: 'they spread a mat, ate breakfast'." },
-    { q: "The word “happy” is closest in meaning to ...", opts: ["sad", "angry", "pleased", "tired", "afraid"], ans: 2, exp: "Happy (senang) memiliki arti yang sama dengan pleased (puas/senang)." },
-    { text: "Rafi found a small bird with a hurt wing. He brought it home, cleaned the wound, and fed it carefully. Two days later, the bird could fly again. Rafi released it near a tree and smiled.", q: "What can we infer about Rafi?", opts: ["He is careless", "He is kind and helpful", "He is lazy", "He is angry", "He is rude"], ans: 1, exp: "Membantu burung yang terluka menunjukkan sifat baik dan suka menolong." },
-    { q: "What is the moral value of the story?", opts: ["Do not help animals", "Helping others is good", "Birds stay in cages", "Ignore injured animals", "Flying is dangerous"], ans: 1, exp: "Pesan moralnya adalah membantu sesama makhluk hidup adalah hal yang baik." },
-    { q: "In the sentence “He brought it home,” the word “it” refers to ...", opts: ["the tree", "the wing", "the bird", "the wound", "the house"], ans: 2, exp: "It merujuk pada 'a small bird' yang ditemukan Rafi." },
-    { text: "1. Boil water. 2. Put tea bags into a glass. 3. Add sugar and hot water. 4. Stir well. 5. Add ice cubes before serving.", q: "What is the first step in the procedure?", opts: ["Add ice cubes", "Stir well", "Put tea bags", "Boil water", "Add sugar"], ans: 3, exp: "Langkah nomor 1 adalah merebus air (boil water)." },
-    { q: "What is the purpose of the text?", opts: ["To tell a story", "To explain how to make iced tea", "To describe a beach", "To invite someone", "To give an opinion"], ans: 1, exp: "Teks prosedur bertujuan menjelaskan langkah pembuatan sesuatu." },
-    { q: "The word “stir” means ...", opts: ["freeze", "mix", "taste", "break", "pour"], ans: 1, exp: "Stir berarti mengaduk, yang tujuannya adalah mencampur (mix)." },
-    { text: "Reading every day is very beneficial. First, it improves vocabulary. Second, it helps students understand texts more easily. Therefore, students should make reading a habit.", q: "What is the main opinion of the writer?", opts: ["Reading is useless", "Reading every day is beneficial", "Students should stop reading", "Vocabulary is not important", "Texts are always easy"], ans: 1, exp: "Penulis berpendapat bahwa membaca setiap hari sangat bermanfaat (beneficial)." },
-    { q: "Which sentence is a supporting reason?", opts: ["Reading every day is very beneficial.", "Therefore, students should make reading a habit.", "It improves vocabulary.", "Reading is boring.", "Students should not read."], ans: 2, exp: "Meningkatkan kosakata adalah salah satu alasan pendukung opini penulis." },
-    { q: "The word “beneficial” is closest in meaning to ...", opts: ["harmful", "useful", "expensive", "silent", "difficult"], ans: 1, exp: "Beneficial berarti bermanfaat atau berguna (useful)." },
-    { text: "Announcement: School Meeting on Friday, 10 April 2026, at 10 a.m. in the school hall. Please bring your notebooks.", q: "What is the purpose of the announcement?", opts: ["To tell a joke", "To inform students about a meeting", "To invite people to a party", "To give a recipe", "To describe a person"], ans: 1, exp: "Pengumuman bertujuan memberi informasi tentang rapat sekolah." },
-    { q: "When will the meeting be held?", opts: ["Monday", "Friday, 10 April 2026", "Sunday", "Saturday", "Next month"], ans: 1, exp: "Sesuai teks: Friday, 10 April 2026." },
-    { q: "Who must attend the meeting?", opts: ["All students", "All class representatives", "All parents", "All teachers", "Janitor"], ans: 1, exp: "Teks menyebutkan 'All class representatives' (seluruh perwakilan kelas)." },
-    { text: "Dear Dina, You are invited to my 17th birthday party this Saturday at 4 p.m. at my house. Love, Sarah", q: "What is the purpose of the text?", opts: ["To report an event", "To invite Dina to a birthday party", "To explain rules", "To give directions", "To ask for homework"], ans: 1, exp: "Ini adalah teks undangan (invitation) untuk ulang tahun." },
-    { q: "Where will the party take place?", opts: ["At Dina’s school", "At a restaurant", "At Sarah’s house", "In the library", "At the beach"], ans: 2, exp: "Lokasi pesta adalah 'at my house' (rumah Sarah)." },
-    { q: "The phrase “my family and me” refers to ...", opts: ["Dina only", "Sarah and her family", "Sarah’s teachers", "Sarah’s classmates only", "The guests only"], ans: 1, exp: "'Me' dalam teks adalah pengirim surat, yaitu Sarah." },
-    { q: "Teacher: Have you finished the assignment? Student: Not yet. Teacher: ___", opts: ["I am sorry to hear that. Submit it tomorrow.", "I do not care.", "Submit last month.", "Never study.", "Not your school."], ans: 0, exp: "Respon yang paling sopan dan logis adalah memberikan toleransi waktu." },
-    { q: "What does the teacher show in the dialogue?", opts: ["Anger", "Concern and flexibility", "Confusion", "Laziness", "Fear"], ans: 1, exp: "Guru menunjukkan perhatian (concern) dan kelenturan (flexibility) waktu." },
-    { q: "She ___ to school every day.", opts: ["goes", "go", "going", "went", "gone"], ans: 0, exp: "Simple Present untuk subjek tunggal 'She' adalah 'goes'." },
-    { q: "They ___ the museum yesterday.", opts: ["visit", "visits", "visited", "visiting", "will visit"], ans: 2, exp: "Kata 'yesterday' menunjukkan masa lampau (V2: visited)." },
-    { q: "We ___ a science project next week.", opts: ["will do", "did", "do", "are did", "doing"], ans: 0, exp: "Next week menunjukkan masa depan (future) menggunakan 'will'." },
-    { q: "The windows ___ by the janitor every morning.", opts: ["clean", "cleans", "are cleaned", "cleaned", "is cleaned"], ans: 2, exp: "Kalimat pasif jamak (windows) menggunakan 'are + V3'." },
-    { q: "This bag is ___ than that one.", opts: ["heavy", "heavier", "highest", "more heavy", "most heavy"], ans: 1, exp: "Perbandingan dua benda (comparative) menggunakan 'heavier'." },
-    { q: "He is the ___ player in the team.", opts: ["good", "better", "best", "well", "more good"], ans: 2, exp: "Superlatif (paling) dari 'good' adalah 'the best'." },
-    { q: "You ___ finish your homework before playing.", opts: ["must", "might", "can", "would", "could"], ans: 0, exp: "Must digunakan untuk menunjukkan kewajiban/keharusan." },
-    { q: "The students ___ in the classroom.", opts: ["is", "are", "was", "be", "am"], ans: 1, exp: "Subjek jamak (students) menggunakan to-be 'are'." },
-    { q: "Rina left early because ___ was tired.", opts: ["he", "they", "she", "it", "we"], ans: 2, exp: "Kata ganti untuk Rina (perempuan) adalah 'she'." },
-    { q: "I studied hard ___ I could pass the test.", opts: ["because", "so that", "although", "unless", "since"], ans: 1, exp: "'So that' digunakan untuk menunjukkan tujuan (supaya/agar)." },
-    { q: "___ it was late, he continued studying.", opts: ["Because", "So", "Although", "If", "Until"], ans: 2, exp: "'Although' (meskipun) menunjukkan pertentangan." },
-    { q: "The word “crucial” is closest in meaning to ...", opts: ["important", "weak", "late", "noisy", "simple"], ans: 0, exp: "Crucial artinya sangat penting (important)." },
-    { q: "The word “borrow” means ...", opts: ["give forever", "take for a short time and return", "buy", "destroy", "hide"], ans: 1, exp: "Borrow artinya meminjam (ambil sementara lalu dikembalikan)." },
-    { q: "The word “carefully” means ...", opts: ["quickly", "with attention", "loudly", "carelessly", "late"], ans: 1, exp: "Carefully artinya dengan penuh perhatian (with attention)." },
-    { q: "He was late; ___, he apologized.", opts: ["however", "therefore", "although", "because", "unless"], ans: 1, exp: "Therefore digunakan untuk menunjukkan akibat (oleh karena itu)." },
-    { q: "The door ___ every night.", opts: ["lock", "locks", "is locked", "locked", "locking"], ans: 2, exp: "Kalimat pasif tunggal: 'is locked'." },
-    { q: "Our teacher told ___ to work in pairs.", opts: ["we", "us", "our", "ours", "ourselves"], ans: 1, exp: "Objek pronoun untuk 'we' adalah 'us'." },
-    { q: "The main idea of a paragraph is the ...", opts: ["longest sentence", "central message", "last word", "difficult vocabulary", "title only"], ans: 1, exp: "Ide utama adalah pesan pusat/inti dari paragraf." },
-    { q: "A recount text tells about ...", opts: ["a recipe", "past events", "a rule", "an argument", "plans"], ans: 1, exp: "Recount text berfungsi menceritakan kejadian masa lalu." },
-    { q: "An announcement is made to ...", opts: ["tell a secret", "inform many people", "describe a place", "tell a story", "ask help"], ans: 1, exp: "Pengumuman dibuat untuk menginformasikan orang banyak." },
-    { q: "The social function of a procedure text is to ...", opts: ["explain steps", "tell a legend", "compare objects", "express feelings", "give news"], ans: 0, exp: "Teks prosedur menjelaskan langkah-langkah melakukan sesuatu." },
-    { q: "In analytical exposition, the writer gives ...", opts: ["only a story", "an opinion and reasons", "a recipe", "a list of names", "a dialogue"], ans: 1, exp: "Teks ini berisi opini penulis beserta argumen/alasannya." },
-    { q: "Which question asks for a detail in a text?", opts: ["What is the main idea?", "Why does the writer write?", "When does the meeting start?", "What is the moral value?", "What is the opinion?"], ans: 2, exp: "Pertanyaan 'When' (Kapan) menanyakan informasi detail waktu." },
-    { q: "Which word shows sequence in a procedure text?", opts: ["first", "because", "although", "however", "since"], ans: 0, exp: "First, second, then, dll adalah kata urutan." },
-    { q: "Which sentence is correct?", opts: ["My friend and I are going", "My friend and I is going", "Friend and me are", "I am going", "I going"], ans: 0, exp: "Subjek jamak 'My friend and I' menggunakan 'are'." },
-    { q: "The students took their books. The word “their” refers to ...", opts: ["the books", "the students", "the teacher", "the classroom", "the lesson"], ans: 1, exp: "Their adalah kata ganti kepemilikan untuk 'the students'." },
-    { q: "“Could you repeat that, please?” is used to ...", opts: ["answer", "ask someone to say again", "end conversation", "make invitation", "give command"], ans: 1, exp: "Ungkapan ini digunakan untuk meminta pengulangan kata." }
+const artBank = [
+    { q: "Unsur seni rupa yang paling sederhana dan menjadi dasar terbentuknya garis adalah ....", a: ["Bidang", "Titik", "Warna", "Ruang", "Tekstur"], c: 1, e: "Titik adalah unsur visual paling dasar. Dari titik yang digerakkan akan terbentuk garis, lalu berkembang menjadi bidang dan bentuk." },
+    { q: "Prinsip seni rupa yang menunjukkan kesan tidak berat sebelah dalam susunan karya adalah ....", a: ["Irama", "Harmoni", "Keseimbangan", "Penekanan", "Kesatuan"], c: 2, e: "Keseimbangan membuat komposisi karya terasa stabil, baik secara simetris maupun asimetris." },
+    { q: "Kesan permukaan kasar, halus, licin, atau berbulu dalam karya seni rupa disebut ....", a: ["Ruang", "Tekstur", "Bidang", "Warna", "Proporsi"], c: 1, e: "Tekstur berkaitan dengan kualitas permukaan benda, baik tekstur nyata (diraba) maupun tekstur semu (dilihat)." },
+    { q: "Dalam musik, cepat atau lambatnya lagu disebut ....", a: ["Dinamika", "Timbre", "Tempo", "Melodi", "Harmoni"], c: 2, e: "Tempo menunjukkan kecepatan lagu. Jangan tertukar dengan dinamika (keras-lembut)." },
+    { q: "Keras atau lembutnya bunyi dalam musik disebut ....", a: ["Ritme", "Dinamika", "Birama", "Tempo", "Nada"], c: 1, e: "Dinamika berkaitan dengan kuat-lemah atau keras-lembutnya bunyi untuk menghidupkan suasana musik." },
+    { q: "Susunan perpindahan penari di atas panggung disebut ....", a: ["Kostum", "Koreografi", "Pola lantai", "Blocking", "Improvisasi"], c: 2, e: "Pola lantai adalah desain lintasan atau perpindahan posisi penari di atas panggung." },
+    { q: "Dalam teater, penempatan posisi pemain di panggung agar adegan terlihat jelas disebut ....", a: ["Improvisasi", "Blocking", "Penokohan", "Monolog", "Aransemen"], c: 1, e: "Blocking adalah pengaturan posisi dan perpindahan pemain agar fokus penonton terarah dan komposisi panggung estetis." },
+    { q: "Unsur yang menunjukkan cara membangun karakter tokoh dalam teater disebut ....", a: ["Alur", "Setting", "Penokohan", "Konflik", "Adegan"], c: 2, e: "Tokoh adalah pelakunya, sedangkan penokohan adalah proses atau cara karakter itu dibentuk (watak)." },
+    { q: "Pernyataan yang paling tepat tentang apresiasi seni adalah ....", a: ["Menghafal nama seniman", "Menilai suka/tidak suka saja", "Menghargai karya dengan memahami unsur, makna, dan tujuan", "Menyalin karya mirip aslinya", "Mengkritik tanpa alasan"], c: 2, e: "Apresiasi berarti memahami karya secara sadar, meliputi pengenalan, pemahaman, dan penghargaan nilai seni." },
+    { q: "Perbedaan paling tepat antara deskripsi dan analisis karya seni adalah ....", a: ["Deskripsi menilai, analisis judul", "Deskripsi menjelaskan yang tampak, analisis makna & hubungan unsur", "Deskripsi panjang, analisis pendek", "Deskripsi musik, analisis rupa", "Keduanya sama"], c: 1, e: "Deskripsi bersifat inventarisasi yang tampak, sedangkan analisis mencari hubungan antar unsur dan prinsip." },
+    { q: "Montase adalah teknik berkarya dengan cara ....", a: ["Menyusun bahan sejenis", "Menempelkan potongan gambar dari berbagai sumber jadi komposisi baru", "Mengukir bahan keras", "Menggambar tanpa alat", "Mencetak pola cap"], c: 1, e: "Montase memanfaatkan potongan gambar yang sudah jadi (dari majalah/koran) lalu disusun ulang menjadi tema baru." },
+    { q: "Yang termasuk fungsi utama seni rupa dalam kehidupan adalah ....", a: ["Hapus nilai budaya", "Menyampaikan pesan, memperindah, dan identitas visual", "Alat hafalan", "Ganti bahasa lisan", "Hanya untuk pameran"], c: 1, e: "Seni rupa memiliki fungsi estetis (keindahan), komunikatif (pesan), dan sosial (identitas)." },
+    { q: "Lagu yang dibawakan kelompok kecil dengan pembagian alat musik dan suara disebut ....", a: ["Solo", "Duet", "Ansambel", "Medley", "Orkestra"], c: 2, e: "Ansambel adalah permainan musik secara bersama-sama dalam satu kelompok menggunakan satu jenis alat atau campuran." },
+    { q: "Mengubah lagu agar sesuai dengan kemampuan pemain dan tujuan pertunjukan disebut ....", a: ["Improvisasi", "Aransemen", "Interval", "Interpretasi", "Transposisi"], c: 1, e: "Aransemen adalah penataan ulang atau penyesuaian komposisi musik tanpa menghilangkan karakter lagu aslinya." },
+    { q: "Makna tari yang lahir dari tari tradisi lalu dikembangkan menjadi bentuk baru disebut ....", a: ["Tari tunggal", "Tari kreasi", "Tari ritual", "Tari akrobatik", "Tari dokumenter"], c: 1, e: "Tari kreasi adalah bentuk tari yang bersumber dari tradisi namun dikembangkan secara inovatif." },
+    { q: "Tiga unsur utama tari yang paling sering digunakan untuk menjelaskan tari adalah ....", a: ["Warna, garis, bentuk", "Nada, tempo, harmoni", "Wiraga, wirama, wirasa", "Tokoh, alur, dialog", "Cahaya, suara, kostum"], c: 2, e: "Wiraga (gerak tubuh), Wirama (irama/musik), dan Wirasa (penghayatan/perasaan)." },
+    { q: "Peran sutradara dalam teater adalah ....", a: ["Hafal dialog pemain", "Menentukan tafsir pementasan & mengarahkan seluruh unsur", "Membuat kostum sendiri", "Ganti penonton", "Main musik saja"], c: 1, e: "Sutradara adalah pemimpin artistik yang mengoordinasikan seluruh elemen pertunjukan." },
+    { q: "Unsur yang paling kuat menunjukkan suasana serius, sedih, atau hangat dalam musik adalah ....", a: ["Timbre, tempo, dan dinamika", "Bidang, garis, tekstur", "Tokoh, konflik, alur", "Wiraga, wirama, wirasa", "Blocking, properti, kostum"], c: 0, e: "Warna suara (timbre), kecepatan (tempo), dan keras-lembut (dinamika) adalah penentu suasana emosional musik." },
+    { q: "Dalam seni rupa, prinsip yang menciptakan pusat perhatian pada bagian tertentu karya disebut ....", a: ["Harmoni", "Irama", "Penekanan", "Proporsi", "Keseimbangan"], c: 2, e: "Penekanan (Emphasis/Center of Interest) bertujuan agar mata penikmat tertuju pada bagian paling penting." },
+    { q: "Teknik yang menggabungkan potongan kecil bahan sejenis untuk membentuk gambar disebut ....", a: ["Kolase", "Mozaik", "Montase", "Sketsa", "Lukis cat"], c: 1, e: "Mozaik menggunakan material yang sama (keramik, kaca, biji-bijian) yang dipotong/berukuran sama." },
+    { q: "Karya seni untuk pesan sosial tentang lingkungan memiliki fungsi ....", a: ["Hiasan murni", "Komunikatif dan edukatif", "Hiburan semata", "Ritual adat", "Pelengkap ruangan"], c: 1, e: "Seni sebagai sarana komunikasi massa untuk mengedukasi masyarakat tentang isu tertentu." },
+    { q: "Seluruh unsur teater bekerja bersama membentuk makna utuh disebut prinsip ....", a: ["Kesatuan", "Monolog", "Improvisasi", "Ekspresi bebas", "Dialog internal"], c: 0, e: "Kesatuan (Unity) memastikan elemen panggung, naskah, dan akting tidak terpecah-pecah." },
+    { q: "Menilai karya seni berdasarkan unsur, makna, dan dampaknya disertai alasan disebut ....", a: ["Menyalin", "Menghafal", "Kritik seni", "Improvisasi", "Eksperimen"], c: 2, e: "Kritik seni melibatkan analisis objektif dan evaluasi mendalam, bukan sekadar komentar subjektif." },
+    { q: "Gerak sederhana dengan penghayatan mendalam menunjukkan unsur ....", a: ["Wirasa", "Pola lantai", "Properti", "Kostum", "Tempo"], c: 0, e: "Wirasa adalah kemampuan penari dalam mengekspresikan karakter dan jiwa tarian." },
+    { q: "Tahap evaluasi kelas 12 yang tepat adalah ....", a: ["Nilai selera pribadi", "Jelaskan proses, tujuan, media, teknik, & efektivitas pesan", "Ukur fisik saja", "Hafal alat", "Tiru mirip"], c: 1, e: "Evaluasi tingkat lanjut mencakup pertanggungjawaban karya secara konsep dan teknis." },
+    { q: "Pembagian ketukan secara teratur dalam musik disebut ....", a: ["Melodi", "Birama", "Timbre", "Dinamika", "Tempo"], c: 1, e: "Birama adalah ayunan ketukan yang datang berulang dengan interval waktu yang sama." },
+    { q: "Kesan serasi antarunsur dalam karya seni rupa disebut ....", a: ["Irama", "Harmoni", "Proporsi", "Ruang", "Tekstur"], c: 1, e: "Harmoni menciptakan keteraturan antar unsur sehingga enak dipandang." },
+    { q: "Penggunaan proporsi dan gestur rinci pada Fase F menunjukkan kemampuan ....", a: ["Mengamati dan menuangkan pengalaman visual", "Hafal warna primer", "Nilai musik", "Tentukan gerak", "Hafal dialog"], c: 0, e: "Fase F menuntut siswa peka terhadap realitas dan mampu merefleksikannya ke dalam karya rupa." },
+    { q: "Memilih media dan teknik sesuai tujuan karya menunjukkan pemahaman tentang ....", a: ["Naskah", "Medium, alat, dan teknik", "Tokoh", "Irama", "Pola lantai"], c: 1, e: "Pemilihan medium (bahan) harus selaras dengan pesan yang ingin disampaikan." },
+    { q: "Memadukan musik dengan teknologi dan seni lain menunjukkan kemampuan ....", a: ["Salin lagu", "Menciptakan musik yang autentik", "Hafal not", "Kurangi unsur", "Hapus konteks"], c: 1, e: "Kreativitas modern dalam musik melibatkan kolaborasi lintas media untuk keaslian karya." },
+    { q: "Warna bunyi yang membedakan suara manusia dan instrumen disebut ....", a: ["Timbre", "Tempo", "Birama", "Ritme", "Interval"], c: 0, e: "Setiap sumber bunyi memiliki spektrum frekuensi unik yang disebut timbre." },
+    { q: "Gerak penari yang menyampaikan emosi sesuai tema menonjolkan aspek ....", a: ["Wiraga", "Wirama", "Wirasa", "Pola lantai", "Kostum"], c: 2, e: "Wirasa adalah jembatan emosi antara penari dan penonton." },
+    { q: "Gerak baru tari kreasi tetap harus memperhatikan ....", a: ["Tema, simbol, dan makna", "Banyak kostum", "Jumlah penonton", "Lampu panggung", "Panjang panggung"], c: 0, e: "Meskipun baru, tari harus memiliki landasan filosofis yang kuat (makna)." },
+    { q: "Konflik dalam teater berfungsi untuk ....", a: ["Hapus alur", "Menggerakkan cerita agar berkembang", "Ganti kostum", "Warna panggung", "Dialog tidak perlu"], c: 1, e: "Tanpa konflik, tidak ada ketegangan yang mendorong alur cerita menuju klimaks." },
+    { q: "Urutan analisis karya seni rupa yang tepat adalah ....", a: ["Suka lalu selesai", "Lihat unsur visual, pahami prinsip, maknai pesan", "Langsung nilai bagus/jelek", "Hafal judul", "Salin deskripsi"], c: 1, e: "Metodologi kritik: Deskripsi (visual), Analisis (prinsip), Interpretasi (makna)." },
+    { q: "Lagu daerah dengan teknologi dan bidang seni lain menunjukkan kemampuan ....", a: ["Hafal lirik", "Mewujudkan dan menyajikan karya musik", "Salin not", "Ubah lagu", "Hapus budaya"], c: 1, e: "Ini adalah bentuk performansi musik integratif sesuai kurikulum modern." },
+    { q: "Perbedaan utama tokoh utama dan pendukung adalah ....", a: ["Utama tak bicara", "Pendukung penting", "Utama sentral alur & konflik", "Utama antagonis", "Pendukung tak tampil"], c: 2, e: "Tokoh utama adalah penggerak utama cerita dari awal hingga akhir." },
+    { q: "Evaluasi pertunjukan tari kelas 12 memperhatikan ....", a: ["Tinggi badan", "Keselarasan gerak, ekspresi, iringan, & tata pentas", "Penonton", "Harga kostum", "Lama latihan"], c: 1, e: "Penilaian menyeluruh terhadap harmoni seluruh elemen panggung." },
+    { q: "Kritik seni harus disertai dasar jelas agar ....", a: ["Terdengar rumit", "Penilaian tidak hanya selera pribadi", "Karya sempurna", "Semua sama", "Tak lihat karya"], c: 1, e: "Argumen ilmiah menjaga objektivitas dalam menilai sebuah karya seni." },
+    { q: "Karya rupa ide pribadi dengan akar budaya sesuai Fase F bagian ....", a: ["Salin karya", "Berdampak", "Ulang sketsa", "Hafal definisi", "Nonton pameran"], c: 1, e: "Karya yang berdampak adalah karya yang memiliki relevansi sosial dan budaya." },
+    { q: "Musik yang dikomentari dengan alasan tepat menunjukkan kemampuan ....", a: ["Mengkritik musik", "Menghafal", "Menggambar", "Abaikan konteks", "Ubah nada"], c: 0, e: "Mampu memberikan apresiasi kritis berdasarkan ilmu musikologi dasar." },
+    { q: "Musik sebagai alat komunikasi dan dokumentasi memahami ....", a: ["Fungsi sosial musik", "Fungsi tekstur", "Fungsi warna", "Fungsi pola", "Fungsi blocking"], c: 0, e: "Musik memiliki peran dalam peradaban manusia melampaui sekadar hiburan." },
+    { q: "Musik, kostum, dan tata panggung teater berfungsi untuk ....", a: ["Hilang alur", "Menyampaikan cerita secara utuh", "Dialog tak perlu", "Ganti tokoh", "Tambah naskah"], c: 1, e: "Elemen artistik visual dan audio memperkuat atmosfer cerita." },
+    { q: "Pameran karya seni lebih menonjolkan ....", a: ["Gerak panggung", "Penyajian karya visual untuk diapresiasi", "Dialog tokoh", "Ketukan musik", "Tari kelompok"], c: 1, e: "Pameran (Exhibition) fokus pada benda seni visual, sedangkan pertunjukan fokus pada aksi." },
+    { q: "Menilai dampak karya sendiri untuk langkah berikutnya disebut ....", a: ["Meniru", "Refleksi", "Hapus ide", "Salin bentuk", "Pindah alat"], c: 1, e: "Refleksi diri adalah kunci pengembangan kreativitas yang berkelanjutan." },
+    { q: "Gerak disusun berdasarkan motif dengan variasi disebut proses ....", a: ["Kostumasi", "Komposisi", "Dokumentasi", "Improvisasi", "Pameran"], c: 1, e: "Komposisi tari adalah seni menata gerak menjadi sebuah struktur utuh." },
+    { q: "Pementasan komedi modern dan tradisi untuk gagasan baru menunjukkan Fase ....", a: ["Rupa", "Musik", "Tari", "Seni Teater Fase F", "Bahasa"], c: 3, e: "Fase F Teater menonjolkan inovasi garapan baru yang kontekstual." },
+    { q: "Menjawab masalah hidup dengan gagasan rupa menunjukkan kemampuan ....", a: ["Hafal unsur", "Menciptakan peluang dan menyelesaikan masalah", "Salin komposisi", "Tiru poster", "Abaikan konteks"], c: 1, e: "Design Thinking: menggunakan seni sebagai solusi kreatif atas masalah nyata." },
+    { q: "Kesimpulan belajar Seni Budaya SMA (Kelas 10-12) adalah ....", a: ["Hafal alat", "Berhenti dasar", "Mengenal unsur, analisis, mencipta, menyaji, & evaluasi", "Teori saja", "Semua sama"], c: 2, e: "Tujuan akhirnya adalah literasi seni yang menyeluruh: dari teknis hingga evaluasi." },
+    { q: "Unsur tari yang berkaitan dengan kesesuaian gerak terhadap irama adalah ....", a: ["Wiraga", "Wirama", "Wirasa", "Pola lantai", "Properti"], c: 1, e: "Wirama memastikan gerak tubuh selaras dengan tempo dan dinamika musik pengiring." }
 ];
 
-let curIdx = 0, score = 0, time = 0, timerOn = false, selectedIdx = -1;
+let curIdx = 0, score = 0, time = 0, active = false, pick = -1;
 
-function startExam() {
-    document.getElementById('sc-start').classList.remove('active');
-    document.getElementById('sc-quiz').classList.add('active');
-    timerOn = true;
-    setInterval(() => { if(timerOn) { time++; updateUI(); } }, 1000);
-    renderQuestion();
+function startApp() {
+    document.getElementById('start-screen').classList.remove('active');
+    document.getElementById('quiz-screen').classList.add('active');
+    active = true;
+    setInterval(() => { if(active) { time++; updateMeta(); } }, 1000);
+    loadQ();
 }
 
-function updateUI() {
+function updateMeta() {
     let m = Math.floor(time/60).toString().padStart(2,'0');
     let s = (time%60).toString().padStart(2,'0');
     document.getElementById('timer').innerText = `${m}:${s}`;
-    document.getElementById('q-counter').innerText = `Question ${curIdx+1}/${questions.length}`;
-    document.getElementById('p-fill').style.width = `${((curIdx+1)/questions.length)*100}%`;
+    document.getElementById('q-number').innerText = `ARTWORK ${curIdx + 1}/50`;
 }
 
-function renderQuestion() {
-    const q = questions[curIdx], body = document.getElementById('quiz-body');
-    let h = '';
-    if(q.text) h += `<div class="reading-section">${q.text}</div>`;
-    h += `<h2>${q.q}</h2><div class="opt-grid">`;
-    q.opts.forEach((o, i) => {
-        h += `<div class="option" onclick="selectOpt(${i})">${o}</div>`;
+function loadQ() {
+    pick = -1;
+    const data = artBank[curIdx];
+    document.getElementById('q-text').innerText = data.q;
+    document.getElementById('exp-box').style.display = 'none';
+    document.getElementById('action-btn').innerText = "ANALISIS JAWABAN";
+    
+    const optsDiv = document.getElementById('options');
+    optsDiv.innerHTML = "";
+    data.a.forEach((o, i) => {
+        const d = document.createElement('div');
+        d.className = 'opt';
+        d.innerHTML = `<strong>${String.fromCharCode(65+i)}.</strong> &nbsp; ${o}`;
+        d.onclick = () => { if(document.getElementById('exp-box').style.display === 'none') {
+            document.querySelectorAll('.opt').forEach(x => x.classList.remove('selected'));
+            d.classList.add('selected'); pick = i;
+        }};
+        optsDiv.appendChild(d);
     });
-    h += `</div>`;
-    body.innerHTML = h;
-    document.getElementById('expl-box').style.display = 'none';
-    document.getElementById('btn-next').innerText = "CHECK ANSWER";
-    selectedIdx = -1;
 }
 
-function selectOpt(i) {
-    if(document.getElementById('expl-box').style.display === 'block') return;
-    const opts = document.querySelectorAll('.option');
-    opts.forEach(o => o.classList.remove('selected'));
-    opts[i].classList.add('selected');
-    selectedIdx = i;
-}
-
-function handleFlow() {
-    const btn = document.getElementById('btn-next');
-    if(btn.innerText === "CHECK ANSWER") {
-        if(selectedIdx === -1) return alert("Pilih satu jawaban!");
-        checkAns();
-        btn.innerText = (curIdx === questions.length-1) ? "LIHAT HASIL" : "NEXT QUESTION";
+function handleAction() {
+    const btn = document.getElementById('action-btn');
+    if(btn.innerText === "ANALISIS JAWABAN") {
+        if(pick === -1) return alert("Tentukan pilihan apresiasimu!");
+        reveal();
+        btn.innerText = (curIdx === 49) ? "SELESAIKAN PAMERAN" : "LANJUTKAN";
     } else {
-        if(curIdx < questions.length-1) {
-            curIdx++;
-            renderQuestion();
-            updateUI();
-        } else {
-            showResult();
-        }
+        if(curIdx < 49) { curIdx++; loadQ(); } else { endApp(); }
     }
 }
 
-function checkAns() {
-    const q = questions[curIdx], opts = document.querySelectorAll('.option'), box = document.getElementById('expl-box');
-    const isCorrect = (selectedIdx === q.ans);
-    
-    // Warna jawaban benar
-    opts[q.ans].classList.add('correct-ans');
-    
-    // Warna jika salah
-    if(!isCorrect) {
-        opts[selectedIdx].classList.add('wrong-ans');
-    } else {
-        score++;
-    }
-
-    // Pembahasan
-    box.innerHTML = `<strong>${isCorrect ? 'BENAR!' : 'SALAH!'}</strong><br>${q.exp}`;
-    box.style.display = 'block';
+function reveal() {
+    const data = artBank[curIdx], opts = document.querySelectorAll('.opt');
+    opts[data.c].classList.add('is-correct');
+    if(pick !== data.c) opts[pick].classList.add('is-wrong');
+    else score++;
+    const exp = document.getElementById('exp-box');
+    exp.innerHTML = `<strong>KURASI:</strong> ${data.e}`;
+    exp.style.display = 'block';
 }
 
-function showResult() {
-    timerOn = false;
-    document.getElementById('sc-quiz').classList.remove('active');
-    document.getElementById('sc-result').classList.add('active');
-    const final = Math.round((score/questions.length)*100);
-    document.getElementById('final-score').innerText = final;
-    document.getElementById('summary-msg').innerText = `Kamu menjawab ${score} dari ${questions.length} soal dengan benar dalam waktu ${document.getElementById('timer').innerText}.`;
+function endApp() {
+    active = false;
+    document.getElementById('quiz-screen').classList.remove('active');
+    document.getElementById('result-screen').classList.add('active');
+    const fScore = Math.round((score/50)*100);
+    document.getElementById('final-score').innerText = fScore;
+    let msg = fScore >= 80 ? "Kamu adalah seorang Kurator Seni sejati! Pemahamanmu sangat mendalam." : 
+              fScore >= 60 ? "Apresiasi yang bagus! Kamu memiliki minat seni yang kuat." : 
+              "Teruslah mengeksplorasi dunia seni, setiap karya punya makna untukmu.";
+    document.getElementById('feedback-text').innerText = msg + `\n\nSkor: ${score} dari 50 soal dalam waktu ${document.getElementById('timer').innerText}`;
 }
 </script>
 </body>
