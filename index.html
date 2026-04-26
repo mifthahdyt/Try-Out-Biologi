@@ -3,238 +3,432 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ART & CULTURE EXAM - SMAN 10 SINJAI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <title>CAT Simulation - Tes Wawasan Kebangsaan</title>
     <style>
         :root {
-            --clay: #b45309;
-            --canvas: #fffaf0;
-            --ink: #2d2d2d;
-            --correct: #166534;
-            --wrong: #991b1b;
-            --accent: #d97706;
+            --primary: #0056b3;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        * { box-sizing: border-box; }
-        body { 
-            background-color: var(--canvas); 
-            color: var(--ink); 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            margin: 0; padding: 20px;
-            display: flex; justify-content: center;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            color: var(--dark);
+            line-height: 1.6;
         }
 
-        .container { width: 100%; max-width: 800px; }
+        .fade-in { animation: fadeIn 0.4s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .art-card {
-            background: white; border-radius: 20px; padding: 40px;
-            box-shadow: 15px 15px 0px rgba(180, 83, 9, 0.1);
-            border: 2px solid #e5e7eb;
-            display: none; animation: fadeIn 0.6s ease;
-        }
-        .active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-        .header { text-align: center; border-bottom: 3px solid var(--clay); padding-bottom: 20px; margin-bottom: 30px; }
-        h1 { font-family: 'Playfair Display', serif; color: var(--clay); margin: 0; font-size: 1.8rem; }
-        
-        .meta-info { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; color: var(--accent); margin-top: 10px; }
-
-        .question-box { font-size: 1.3rem; font-weight: 600; line-height: 1.6; margin-bottom: 25px; color: #111827; }
-
-        .option-list { display: grid; gap: 15px; }
-        .opt {
-            padding: 18px; border: 2px solid #f3f4f6; border-radius: 12px;
-            cursor: pointer; background: #fafafa; font-size: 1rem;
-            transition: 0.3s; display: flex; align-items: center;
-        }
-        .opt:hover { border-color: var(--clay); background: #fffbeb; }
-        .opt.selected { border-color: var(--clay); background: #fef3c7; font-weight: 600; }
-
-        .is-correct { background: #dcfce7 !important; border-color: var(--correct) !important; color: var(--correct); }
-        .is-wrong { background: #fee2e2 !important; border-color: var(--wrong) !important; color: var(--wrong); }
-
-        .explanation {
-            margin-top: 25px; padding: 20px; border-radius: 12px;
-            background: #fefce8; border-left: 6px solid var(--clay);
-            display: none; font-size: 0.95rem; line-height: 1.6; color: #4b5563;
+        /* Intro Screen */
+        #intro-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        .btn-main {
-            width: 100%; padding: 18px; margin-top: 30px; border: none;
-            border-radius: 12px; background: var(--clay); color: white;
-            font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
         }
-        .btn-main:hover { background: var(--accent); transform: translateY(-2px); }
 
-        .result-circle {
-            width: 150px; height: 150px; border: 8px solid var(--clay);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin: 30px auto; font-size: 3rem; font-weight: 800; color: var(--clay);
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
         }
+
+        .btn-start { background: var(--primary); color: white; width: 100%; margin-top: 20px; font-size: 1.1rem; }
+        .btn-start:hover { background: #004494; transform: translateY(-2px); }
+
+        /* Exam Screen */
+        #exam-screen { display: none; flex-direction: column; height: 100vh; }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .timer-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1.2rem;
+            border: 1px solid white;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .main-content { flex-direction: column; overflow-y: auto; }
+            #exam-screen { height: auto; }
+        }
+
+        .question-card {
+            flex: 3;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 25px; }
+
+        .option-item {
+            display: flex;
+            padding: 15px;
+            margin-bottom: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .option-item:hover { background: #f8f9fa; border-color: var(--primary); }
+        .option-item.selected { background: #e7f1ff; border-color: var(--primary); font-weight: bold; }
+
+        /* Navigation Sidebar */
+        .nav-sidebar {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            max-height: 100%;
+            overflow-y: auto;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .nav-num {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            background: #f8f9fa;
+        }
+
+        .nav-num.answered { background: var(--success); color: white; border-color: var(--success); }
+        .nav-num.doubt { background: var(--warning); color: black; border-color: var(--warning); }
+        .nav-num.active { border: 2px solid var(--dark); font-weight: bold; }
+
+        .controls { display: flex; justify-content: space-between; margin-top: auto; padding-top: 30px; gap: 10px; }
+        .btn-nav { background: var(--secondary); color: white; }
+        .btn-finish { background: var(--danger); color: white; }
+
+        #modal-overlay {
+            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;
+        }
+
+        #result-screen, #review-screen { display: none; padding: 40px 20px; }
+        .review-card { background: white; margin-bottom: 15px; padding: 20px; border-radius: 8px; border-left: 6px solid var(--primary); box-shadow: var(--shadow); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="start-screen" class="art-card active" style="text-align: center;">
-        <div style="font-size: 5rem; margin-bottom: 20px;">🎨</div>
-        <h1>GALERI UJIAN SENI BUDAYA</h1>
-        <p>Evaluasi Akhir Semester - 50 Pertanyaan Terkurasi</p>
-        <button class="btn-main" onclick="startApp()">MASUK GALERI SOAL</button>
-    </div>
-
-    <div id="quiz-screen" class="art-card">
-        <div class="header">
-            <h1 id="category-label">SENI RUPA</h1>
-            <div class="meta-info">
-                <span id="q-number">ARTWORK 1/50</span>
-                <span id="timer">00:00</span>
-            </div>
+<div id="intro-screen" class="fade-in">
+    <div class="card">
+        <h1 style="color: var(--primary); margin-bottom: 10px;">Simulasi CAT TWK 2026</h1>
+        <p style="margin-bottom: 20px;">Selamat datang di platform simulasi Tes Wawasan Kebangsaan.</p>
+        <div style="text-align: left; background: var(--light); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <strong>Ketentuan Simulasi:</strong>
+            <ul style="margin-left: 20px; margin-top: 10px; font-size: 0.9rem;">
+                <li>Total Soal: 50 Butir</li>
+                <li>Waktu Pengerjaan: 30 Menit</li>
+                <li>Passing Grade: Skor 65</li>
+                <li>Navigasi bebas (bisa lompat soal)</li>
+            </ul>
         </div>
-        
-        <div id="q-text" class="question-box">Memuat pertanyaan...</div>
-        <div id="options" class="option-list"></div>
-
-        <div id="exp-box" class="explanation"></div>
-        
-        <button id="action-btn" class="btn-main" onclick="handleAction()">ANALISIS JAWABAN</button>
-    </div>
-
-    <div id="result-screen" class="art-card" style="text-align: center;">
-        <h1>APRESIASI AKHIR</h1>
-        <div class="result-circle" id="final-score">0</div>
-        <p id="feedback-text" style="font-size: 1.2rem; line-height: 1.6;"></p>
-        <button class="btn-main" onclick="location.reload()">RE-INTERPRETASI (ULANG)</button>
+        <button class="btn btn-start" onclick="startExam()">Mulai Simulasi</button>
     </div>
 </div>
 
+<div id="exam-screen">
+    <header>
+        <div>
+            <strong style="letter-spacing: 1px;">CAT SYSTEM</strong>
+            <div id="progress-header" style="font-size: 0.75rem; opacity: 0.9;">Memuat soal...</div>
+        </div>
+        <div class="timer-badge" id="timer">30:00</div>
+    </header>
+
+    <div class="main-content">
+        <div class="question-card fade-in">
+            <div style="color: var(--secondary); font-weight: bold; margin-bottom: 10px;" id="q-label">SOAL</div>
+            <div class="question-text" id="q-text">Sedang memuat pertanyaan...</div>
+            <div id="options-container"></div>
+            
+            <div class="controls">
+                <button class="btn btn-nav" onclick="changeQuestion(-1)">Sebelumnya</button>
+                <button class="btn btn-nav" style="background: var(--warning); color: black;" onclick="markDoubt()">Ragu-Ragu</button>
+                <button class="btn btn-nav" id="btn-next" style="background: var(--primary);" onclick="changeQuestion(1)">Selanjutnya</button>
+                <button class="btn btn-finish" id="btn-finish" style="display:none;" onclick="showConfirm()">Selesai</button>
+            </div>
+        </div>
+
+        <div class="nav-sidebar">
+            <h4 style="font-size: 0.9rem; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Daftar Soal</h4>
+            <div class="nav-grid" id="nav-grid"></div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-overlay">
+    <div class="card" style="max-width: 400px;">
+        <h3>Selesaikan Ujian?</h3>
+        <p style="margin: 15px 0;">Pastikan semua jawaban sudah terisi dengan benar.</p>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-finish" style="flex: 1;" onclick="finishExam()">Ya, Selesai</button>
+            <button class="btn btn-nav" style="flex: 1;" onclick="hideConfirm()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<div id="result-screen" class="fade-in">
+    <div class="card" style="margin: auto;">
+        <h2 id="status-tag">HASIL</h2>
+        <div style="font-size: 4rem; font-weight: bold; margin: 10px 0; color: var(--primary);" id="score-text">0</div>
+        <p id="stats-detail" style="font-weight: 500;"></p>
+        <div style="margin-top: 25px; display: flex; gap: 10px;">
+            <button class="btn btn-start" onclick="showReview()" style="margin:0; flex:1;">Review</button>
+            <button class="btn btn-nav" onclick="location.reload()" style="flex:1;">Ulangi</button>
+        </div>
+    </div>
+</div>
+
+<div id="review-screen" class="fade-in">
+    <h2 style="margin-bottom: 25px; text-align: center;">Review Jawaban</h2>
+    <div id="review-content" style="max-width: 800px; margin: auto;"></div>
+    <center><button class="btn btn-nav" onclick="location.reload()" style="margin: 30px;">Kembali</button></center>
+</div>
+
 <script>
-const artBank = [
-    { q: "Unsur seni rupa yang paling sederhana dan menjadi dasar terbentuknya garis adalah ....", a: ["Bidang", "Titik", "Warna", "Ruang", "Tekstur"], c: 1, e: "Titik adalah unsur visual paling dasar. Dari titik yang digerakkan akan terbentuk garis, lalu berkembang menjadi bidang dan bentuk." },
-    { q: "Prinsip seni rupa yang menunjukkan kesan tidak berat sebelah dalam susunan karya adalah ....", a: ["Irama", "Harmoni", "Keseimbangan", "Penekanan", "Kesatuan"], c: 2, e: "Keseimbangan membuat komposisi karya terasa stabil, baik secara simetris maupun asimetris." },
-    { q: "Kesan permukaan kasar, halus, licin, atau berbulu dalam karya seni rupa disebut ....", a: ["Ruang", "Tekstur", "Bidang", "Warna", "Proporsi"], c: 1, e: "Tekstur berkaitan dengan kualitas permukaan benda, baik tekstur nyata (diraba) maupun tekstur semu (dilihat)." },
-    { q: "Dalam musik, cepat atau lambatnya lagu disebut ....", a: ["Dinamika", "Timbre", "Tempo", "Melodi", "Harmoni"], c: 2, e: "Tempo menunjukkan kecepatan lagu. Jangan tertukar dengan dinamika (keras-lembut)." },
-    { q: "Keras atau lembutnya bunyi dalam musik disebut ....", a: ["Ritme", "Dinamika", "Birama", "Tempo", "Nada"], c: 1, e: "Dinamika berkaitan dengan kuat-lemah atau keras-lembutnya bunyi untuk menghidupkan suasana musik." },
-    { q: "Susunan perpindahan penari di atas panggung disebut ....", a: ["Kostum", "Koreografi", "Pola lantai", "Blocking", "Improvisasi"], c: 2, e: "Pola lantai adalah desain lintasan atau perpindahan posisi penari di atas panggung." },
-    { q: "Dalam teater, penempatan posisi pemain di panggung agar adegan terlihat jelas disebut ....", a: ["Improvisasi", "Blocking", "Penokohan", "Monolog", "Aransemen"], c: 1, e: "Blocking adalah pengaturan posisi dan perpindahan pemain agar fokus penonton terarah dan komposisi panggung estetis." },
-    { q: "Unsur yang menunjukkan cara membangun karakter tokoh dalam teater disebut ....", a: ["Alur", "Setting", "Penokohan", "Konflik", "Adegan"], c: 2, e: "Tokoh adalah pelakunya, sedangkan penokohan adalah proses atau cara karakter itu dibentuk (watak)." },
-    { q: "Pernyataan yang paling tepat tentang apresiasi seni adalah ....", a: ["Menghafal nama seniman", "Menilai suka/tidak suka saja", "Menghargai karya dengan memahami unsur, makna, dan tujuan", "Menyalin karya mirip aslinya", "Mengkritik tanpa alasan"], c: 2, e: "Apresiasi berarti memahami karya secara sadar, meliputi pengenalan, pemahaman, dan penghargaan nilai seni." },
-    { q: "Perbedaan paling tepat antara deskripsi dan analisis karya seni adalah ....", a: ["Deskripsi menilai, analisis judul", "Deskripsi menjelaskan yang tampak, analisis makna & hubungan unsur", "Deskripsi panjang, analisis pendek", "Deskripsi musik, analisis rupa", "Keduanya sama"], c: 1, e: "Deskripsi bersifat inventarisasi yang tampak, sedangkan analisis mencari hubungan antar unsur dan prinsip." },
-    { q: "Montase adalah teknik berkarya dengan cara ....", a: ["Menyusun bahan sejenis", "Menempelkan potongan gambar dari berbagai sumber jadi komposisi baru", "Mengukir bahan keras", "Menggambar tanpa alat", "Mencetak pola cap"], c: 1, e: "Montase memanfaatkan potongan gambar yang sudah jadi (dari majalah/koran) lalu disusun ulang menjadi tema baru." },
-    { q: "Yang termasuk fungsi utama seni rupa dalam kehidupan adalah ....", a: ["Hapus nilai budaya", "Menyampaikan pesan, memperindah, dan identitas visual", "Alat hafalan", "Ganti bahasa lisan", "Hanya untuk pameran"], c: 1, e: "Seni rupa memiliki fungsi estetis (keindahan), komunikatif (pesan), dan sosial (identitas)." },
-    { q: "Lagu yang dibawakan kelompok kecil dengan pembagian alat musik dan suara disebut ....", a: ["Solo", "Duet", "Ansambel", "Medley", "Orkestra"], c: 2, e: "Ansambel adalah permainan musik secara bersama-sama dalam satu kelompok menggunakan satu jenis alat atau campuran." },
-    { q: "Mengubah lagu agar sesuai dengan kemampuan pemain dan tujuan pertunjukan disebut ....", a: ["Improvisasi", "Aransemen", "Interval", "Interpretasi", "Transposisi"], c: 1, e: "Aransemen adalah penataan ulang atau penyesuaian komposisi musik tanpa menghilangkan karakter lagu aslinya." },
-    { q: "Makna tari yang lahir dari tari tradisi lalu dikembangkan menjadi bentuk baru disebut ....", a: ["Tari tunggal", "Tari kreasi", "Tari ritual", "Tari akrobatik", "Tari dokumenter"], c: 1, e: "Tari kreasi adalah bentuk tari yang bersumber dari tradisi namun dikembangkan secara inovatif." },
-    { q: "Tiga unsur utama tari yang paling sering digunakan untuk menjelaskan tari adalah ....", a: ["Warna, garis, bentuk", "Nada, tempo, harmoni", "Wiraga, wirama, wirasa", "Tokoh, alur, dialog", "Cahaya, suara, kostum"], c: 2, e: "Wiraga (gerak tubuh), Wirama (irama/musik), dan Wirasa (penghayatan/perasaan)." },
-    { q: "Peran sutradara dalam teater adalah ....", a: ["Hafal dialog pemain", "Menentukan tafsir pementasan & mengarahkan seluruh unsur", "Membuat kostum sendiri", "Ganti penonton", "Main musik saja"], c: 1, e: "Sutradara adalah pemimpin artistik yang mengoordinasikan seluruh elemen pertunjukan." },
-    { q: "Unsur yang paling kuat menunjukkan suasana serius, sedih, atau hangat dalam musik adalah ....", a: ["Timbre, tempo, dan dinamika", "Bidang, garis, tekstur", "Tokoh, konflik, alur", "Wiraga, wirama, wirasa", "Blocking, properti, kostum"], c: 0, e: "Warna suara (timbre), kecepatan (tempo), dan keras-lembut (dinamika) adalah penentu suasana emosional musik." },
-    { q: "Dalam seni rupa, prinsip yang menciptakan pusat perhatian pada bagian tertentu karya disebut ....", a: ["Harmoni", "Irama", "Penekanan", "Proporsi", "Keseimbangan"], c: 2, e: "Penekanan (Emphasis/Center of Interest) bertujuan agar mata penikmat tertuju pada bagian paling penting." },
-    { q: "Teknik yang menggabungkan potongan kecil bahan sejenis untuk membentuk gambar disebut ....", a: ["Kolase", "Mozaik", "Montase", "Sketsa", "Lukis cat"], c: 1, e: "Mozaik menggunakan material yang sama (keramik, kaca, biji-bijian) yang dipotong/berukuran sama." },
-    { q: "Karya seni untuk pesan sosial tentang lingkungan memiliki fungsi ....", a: ["Hiasan murni", "Komunikatif dan edukatif", "Hiburan semata", "Ritual adat", "Pelengkap ruangan"], c: 1, e: "Seni sebagai sarana komunikasi massa untuk mengedukasi masyarakat tentang isu tertentu." },
-    { q: "Seluruh unsur teater bekerja bersama membentuk makna utuh disebut prinsip ....", a: ["Kesatuan", "Monolog", "Improvisasi", "Ekspresi bebas", "Dialog internal"], c: 0, e: "Kesatuan (Unity) memastikan elemen panggung, naskah, dan akting tidak terpecah-pecah." },
-    { q: "Menilai karya seni berdasarkan unsur, makna, dan dampaknya disertai alasan disebut ....", a: ["Menyalin", "Menghafal", "Kritik seni", "Improvisasi", "Eksperimen"], c: 2, e: "Kritik seni melibatkan analisis objektif dan evaluasi mendalam, bukan sekadar komentar subjektif." },
-    { q: "Gerak sederhana dengan penghayatan mendalam menunjukkan unsur ....", a: ["Wirasa", "Pola lantai", "Properti", "Kostum", "Tempo"], c: 0, e: "Wirasa adalah kemampuan penari dalam mengekspresikan karakter dan jiwa tarian." },
-    { q: "Tahap evaluasi kelas 12 yang tepat adalah ....", a: ["Nilai selera pribadi", "Jelaskan proses, tujuan, media, teknik, & efektivitas pesan", "Ukur fisik saja", "Hafal alat", "Tiru mirip"], c: 1, e: "Evaluasi tingkat lanjut mencakup pertanggungjawaban karya secara konsep dan teknis." },
-    { q: "Pembagian ketukan secara teratur dalam musik disebut ....", a: ["Melodi", "Birama", "Timbre", "Dinamika", "Tempo"], c: 1, e: "Birama adalah ayunan ketukan yang datang berulang dengan interval waktu yang sama." },
-    { q: "Kesan serasi antarunsur dalam karya seni rupa disebut ....", a: ["Irama", "Harmoni", "Proporsi", "Ruang", "Tekstur"], c: 1, e: "Harmoni menciptakan keteraturan antar unsur sehingga enak dipandang." },
-    { q: "Penggunaan proporsi dan gestur rinci pada Fase F menunjukkan kemampuan ....", a: ["Mengamati dan menuangkan pengalaman visual", "Hafal warna primer", "Nilai musik", "Tentukan gerak", "Hafal dialog"], c: 0, e: "Fase F menuntut siswa peka terhadap realitas dan mampu merefleksikannya ke dalam karya rupa." },
-    { q: "Memilih media dan teknik sesuai tujuan karya menunjukkan pemahaman tentang ....", a: ["Naskah", "Medium, alat, dan teknik", "Tokoh", "Irama", "Pola lantai"], c: 1, e: "Pemilihan medium (bahan) harus selaras dengan pesan yang ingin disampaikan." },
-    { q: "Memadukan musik dengan teknologi dan seni lain menunjukkan kemampuan ....", a: ["Salin lagu", "Menciptakan musik yang autentik", "Hafal not", "Kurangi unsur", "Hapus konteks"], c: 1, e: "Kreativitas modern dalam musik melibatkan kolaborasi lintas media untuk keaslian karya." },
-    { q: "Warna bunyi yang membedakan suara manusia dan instrumen disebut ....", a: ["Timbre", "Tempo", "Birama", "Ritme", "Interval"], c: 0, e: "Setiap sumber bunyi memiliki spektrum frekuensi unik yang disebut timbre." },
-    { q: "Gerak penari yang menyampaikan emosi sesuai tema menonjolkan aspek ....", a: ["Wiraga", "Wirama", "Wirasa", "Pola lantai", "Kostum"], c: 2, e: "Wirasa adalah jembatan emosi antara penari dan penonton." },
-    { q: "Gerak baru tari kreasi tetap harus memperhatikan ....", a: ["Tema, simbol, dan makna", "Banyak kostum", "Jumlah penonton", "Lampu panggung", "Panjang panggung"], c: 0, e: "Meskipun baru, tari harus memiliki landasan filosofis yang kuat (makna)." },
-    { q: "Konflik dalam teater berfungsi untuk ....", a: ["Hapus alur", "Menggerakkan cerita agar berkembang", "Ganti kostum", "Warna panggung", "Dialog tidak perlu"], c: 1, e: "Tanpa konflik, tidak ada ketegangan yang mendorong alur cerita menuju klimaks." },
-    { q: "Urutan analisis karya seni rupa yang tepat adalah ....", a: ["Suka lalu selesai", "Lihat unsur visual, pahami prinsip, maknai pesan", "Langsung nilai bagus/jelek", "Hafal judul", "Salin deskripsi"], c: 1, e: "Metodologi kritik: Deskripsi (visual), Analisis (prinsip), Interpretasi (makna)." },
-    { q: "Lagu daerah dengan teknologi dan bidang seni lain menunjukkan kemampuan ....", a: ["Hafal lirik", "Mewujudkan dan menyajikan karya musik", "Salin not", "Ubah lagu", "Hapus budaya"], c: 1, e: "Ini adalah bentuk performansi musik integratif sesuai kurikulum modern." },
-    { q: "Perbedaan utama tokoh utama dan pendukung adalah ....", a: ["Utama tak bicara", "Pendukung penting", "Utama sentral alur & konflik", "Utama antagonis", "Pendukung tak tampil"], c: 2, e: "Tokoh utama adalah penggerak utama cerita dari awal hingga akhir." },
-    { q: "Evaluasi pertunjukan tari kelas 12 memperhatikan ....", a: ["Tinggi badan", "Keselarasan gerak, ekspresi, iringan, & tata pentas", "Penonton", "Harga kostum", "Lama latihan"], c: 1, e: "Penilaian menyeluruh terhadap harmoni seluruh elemen panggung." },
-    { q: "Kritik seni harus disertai dasar jelas agar ....", a: ["Terdengar rumit", "Penilaian tidak hanya selera pribadi", "Karya sempurna", "Semua sama", "Tak lihat karya"], c: 1, e: "Argumen ilmiah menjaga objektivitas dalam menilai sebuah karya seni." },
-    { q: "Karya rupa ide pribadi dengan akar budaya sesuai Fase F bagian ....", a: ["Salin karya", "Berdampak", "Ulang sketsa", "Hafal definisi", "Nonton pameran"], c: 1, e: "Karya yang berdampak adalah karya yang memiliki relevansi sosial dan budaya." },
-    { q: "Musik yang dikomentari dengan alasan tepat menunjukkan kemampuan ....", a: ["Mengkritik musik", "Menghafal", "Menggambar", "Abaikan konteks", "Ubah nada"], c: 0, e: "Mampu memberikan apresiasi kritis berdasarkan ilmu musikologi dasar." },
-    { q: "Musik sebagai alat komunikasi dan dokumentasi memahami ....", a: ["Fungsi sosial musik", "Fungsi tekstur", "Fungsi warna", "Fungsi pola", "Fungsi blocking"], c: 0, e: "Musik memiliki peran dalam peradaban manusia melampaui sekadar hiburan." },
-    { q: "Musik, kostum, dan tata panggung teater berfungsi untuk ....", a: ["Hilang alur", "Menyampaikan cerita secara utuh", "Dialog tak perlu", "Ganti tokoh", "Tambah naskah"], c: 1, e: "Elemen artistik visual dan audio memperkuat atmosfer cerita." },
-    { q: "Pameran karya seni lebih menonjolkan ....", a: ["Gerak panggung", "Penyajian karya visual untuk diapresiasi", "Dialog tokoh", "Ketukan musik", "Tari kelompok"], c: 1, e: "Pameran (Exhibition) fokus pada benda seni visual, sedangkan pertunjukan fokus pada aksi." },
-    { q: "Menilai dampak karya sendiri untuk langkah berikutnya disebut ....", a: ["Meniru", "Refleksi", "Hapus ide", "Salin bentuk", "Pindah alat"], c: 1, e: "Refleksi diri adalah kunci pengembangan kreativitas yang berkelanjutan." },
-    { q: "Gerak disusun berdasarkan motif dengan variasi disebut proses ....", a: ["Kostumasi", "Komposisi", "Dokumentasi", "Improvisasi", "Pameran"], c: 1, e: "Komposisi tari adalah seni menata gerak menjadi sebuah struktur utuh." },
-    { q: "Pementasan komedi modern dan tradisi untuk gagasan baru menunjukkan Fase ....", a: ["Rupa", "Musik", "Tari", "Seni Teater Fase F", "Bahasa"], c: 3, e: "Fase F Teater menonjolkan inovasi garapan baru yang kontekstual." },
-    { q: "Menjawab masalah hidup dengan gagasan rupa menunjukkan kemampuan ....", a: ["Hafal unsur", "Menciptakan peluang dan menyelesaikan masalah", "Salin komposisi", "Tiru poster", "Abaikan konteks"], c: 1, e: "Design Thinking: menggunakan seni sebagai solusi kreatif atas masalah nyata." },
-    { q: "Kesimpulan belajar Seni Budaya SMA (Kelas 10-12) adalah ....", a: ["Hafal alat", "Berhenti dasar", "Mengenal unsur, analisis, mencipta, menyaji, & evaluasi", "Teori saja", "Semua sama"], c: 2, e: "Tujuan akhirnya adalah literasi seni yang menyeluruh: dari teknis hingga evaluasi." },
-    { q: "Unsur tari yang berkaitan dengan kesesuaian gerak terhadap irama adalah ....", a: ["Wiraga", "Wirama", "Wirasa", "Pola lantai", "Properti"], c: 1, e: "Wirama memastikan gerak tubuh selaras dengan tempo dan dinamika musik pengiring." }
-];
+    // Data soal disingkat untuk efisiensi kode di sini (masukkan 50 soal lengkap Anda di array ini)
+    const questions = [
+        { q: "UUD 1945 pada dasarnya merupakan …", o: ["hukum adat tertulis yang berlaku di daerah", "hukum dasar tertulis tertinggi dalam negara Indonesia", "peraturan presiden yang mengatur lembaga negara", "keputusan MPR yang bersifat sementara", "pedoman moral dalam kehidupan masyarakat"], a: 1 },
+        { q: "Perbedaan yang paling tepat antara Pancasila dan UUD 1945 adalah …", o: ["Pancasila mengatur pasal-pasal, UUD 1945 memuat nilai dasar", "Pancasila adalah dasar negara, sedangkan UUD 1945 adalah hukum dasar negara", "Pancasila bersifat teknis, sedangkan UUD 1945 bersifat ideologis", "Pancasila hanya berlaku pada masa kemerdekaan, sedangkan UUD 1945 berlaku selamanya", "Pancasila dan UUD 1945 memiliki kedudukan yang sama sebagai hukum tertulis"], a: 1 },
+        { q: "UUD 1945 disahkan pada tanggal …", o: ["1 Juni 1945", "17 Agustus 1945", "18 Agustus 1945", "22 Juni 1945", "19 Agustus 1945"], a: 2 },
+        { q: "Lembaga yang mempersiapkan rancangan konstitusi Indonesia sebelum kemerdekaan adalah …", o: ["PPKI", "MPR", "DPR", "BPUPKI", "BPK"], a: 3 },
+        { q: "Panitia Sembilan menghasilkan dokumen yang dikenal sebagai …", o: ["Deklarasi Jakarta", "Piagam Jakarta", "UUD Sementara", "Naskah Proklamasi", "Ketetapan MPR"], a: 1 },
+        { q: "Tahap yang tepat dalam sejarah perumusan UUD 1945 adalah …", o: ["PPKI menyiapkan konstitusi, BPUPKI mengesahkan, Panitia Sembilan menyusun", "BPUPKI menyiapkan konstitusi, Panitia Sembilan menyusun Piagam Jakarta, PPKI mengesahkan UUD", "Panitia Sembilan mengesahkan UUD, PPKI menyusun Piagam Jakarta, BPUPKI membubarkan diri", "MPR menyusun konstitusi, DPR membahas, MK mengesahkan", "Pancasila dirumuskan setelah UUD 1945 disahkan"], a: 1 },
+        { q: "Pembukaan UUD 1945 terdiri atas …", o: ["tiga alinea", "empat alinea", "lima alinea", "enam alinea", "tujuh alinea"], a: 1 },
+        { q: "Makna alinea pertama Pembukaan UUD 1945 adalah …", o: ["bangsa Indonesia menjunjung persatuan", "bangsa Indonesia menolak penjajahan", "bangsa Indonesia berserah kepada Tuhan", "bangsa Indonesia memilih demokrasi", "bangsa Indonesia berhak memerintah sendiri"], a: 1 },
+        { q: "Makna alinea ketiga Pembukaan UUD 1945 berkaitan dengan …", o: ["perjuangan rakyat melawan penjajah", "rahmat Tuhan Yang Maha Esa", "tujuan negara Indonesia", "kemerdekaan sebagai hasil perundingan", "penegasan bentuk negara kesatuan"], a: 1 },
+        { q: "Alinea keempat Pembukaan UUD 1945 memuat …", o: ["sejarah perjuangan bangsa semata", "tujuan negara dan dasar negara Pancasila", "penjelasan sistem ekonomi nasional", "susunan lembaga negara", "aturan peralihan dan aturan tambahan"], a: 1 },
+        { q: "Bagian UUD 1945 yang berisi pasal-pasal adalah …", o: ["Pembukaan", "Batang tubuh", "Aturan peralihan", "Aturan tambahan", "Penjelasan"], a: 1 },
+        { q: "Bagian UUD 1945 yang berfungsi sebagai ketentuan sementara adalah …", o: ["Pembukaan", "Batang tubuh", "Aturan peralihan", "Aturan tambahan", "Penutup"], a: 2 },
+        { q: "Salah satu fungsi utama UUD 1945 adalah sebagai …", o: ["pedoman pembuatan peraturan daerah", "hukum dasar tertulis tertinggi", "keputusan lembaga yudikatif", "sumber hukum di bawah undang-undang", "pedoman kebiasaan masyarakat"], a: 1 },
+        { q: "Hubungan yang tepat antara Pancasila dan UUD 1945 adalah …", o: ["Pancasila merupakan aturan teknis, UUD 1945 merupakan nilai-nilai dasar", "Pancasila menjadi jiwa, sedangkan UUD 1945 menjadi aturan dasar", "Pancasila berada di bawah UUD 1945", "UUD 1945 menjadi dasar moral, Pancasila menjadi pedoman hukum", "Keduanya tidak saling berhubungan"], a: 1 },
+        { q: "Pasal UUD 1945 yang berkaitan erat dengan hak asasi manusia antara lain …", o: ["Pasal 1 dan 2", "Pasal 20 dan 21", "Pasal 27 dan Pasal 28A–28J", "Pasal 37 dan 38", "Pasal 24 dan 25"], a: 2 },
+        { q: "Jika terdapat peraturan yang bertentangan dengan undang-undang, lembaga yang berwenang menguji adalah …", o: ["MPR", "MA", "MK", "DPR", "DPD"], a: 1 },
+        { q: "Jika yang diuji adalah undang-undang terhadap UUD 1945, lembaga yang berwenang adalah …", o: ["MA", "MK", "BPK", "DPR", "MPR"], a: 1 },
+        { q: "Lembaga yang memeriksa pengelolaan dan tanggung jawab keuangan negara adalah …", o: ["BPK", "MK", "MA", "DPR", "DPD"], a: 0 },
+        { q: "Presiden memegang kekuasaan pemerintahan menurut …", o: ["MPR", "UUD 1945", "Tap MPR", "UU Pemilu", "Peraturan Presiden"], a: 1 },
+        { q: "Masa jabatan Presiden menurut ketentuan UUD 1945 adalah …", o: ["4 tahun dan dapat dipilih kembali tanpa batas", "5 tahun dan dapat dipilih kembali satu kali", "5 tahun dan tidak boleh dipilih kembali", "6 tahun dan dapat dipilih kembali dua kali", "7 tahun dan dipilih oleh MPR"], a: 1 },
+        { q: "Jumlah maksimal masa jabatan Presiden adalah …", o: ["1 periode", "2 periode", "3 periode", "4 periode", "tanpa batas"], a: 1 },
+        { q: "Setelah amandemen UUD 1945, kedudukan MPR adalah …", o: ["lembaga tertinggi negara", "lembaga di atas Presiden", "setara dengan lembaga negara lain dalam sistem checks and balances", "badan pembentuk undang-undang tunggal", "lembaga yang membawahi MA dan MK"], a: 2 },
+        { q: "Anggota MPR terdiri atas …", o: ["DPR dan DPD", "DPR dan MA", "DPD dan BPK", "Presiden dan DPR", "MK dan MA"], a: 0 },
+        { q: "Fungsi DPR yang benar adalah …", o: ["menguji undang-undang terhadap UUD 1945", "membentuk undang-undang bersama Presiden", "memeriksa keuangan negara", "melantik Presiden", "mengadili sengketa hasil pemilu"], a: 1 },
+        { q: "DPD merupakan lembaga perwakilan yang mewakili …", o: ["kementerian", "rakyat secara umum", "daerah", "partai politik", "lembaga yudikatif"], a: 2 },
+        { q: "Pernyataan yang paling tepat mengenai DPD adalah …", o: ["memiliki kewenangan membentuk undang-undang sepenuhnya", "merupakan wakil daerah yang dapat mengajukan RUU tertentu", "menggantikan fungsi DPR", "memiliki kewenangan menguji undang-undang", "berwenang memeriksa keuangan negara"], a: 1 },
+        { q: "Lembaga yang berwenang menetapkan dan mengubah UUD 1945 adalah …", o: ["DPR", "DPD", "MPR", "MK", "BPK"], a: 2 },
+        { q: "Berikut ini yang termasuk hasil penting amandemen UUD 1945 adalah …", o: ["Presiden menjadi tidak terbatas masa jabatannya", "MPR kembali menjadi lembaga tertinggi negara", "Munculnya MK dan DPD", "DPR dibubarkan", "UUD 1945 tidak lagi berlaku"], a: 2 },
+        { q: "Amandemen UUD 1945 dilakukan sebanyak …", o: ["1 kali", "2 kali", "3 kali", "4 kali", "5 kali"], a: 3 },
+        { q: "Amandemen UUD 1945 dilakukan pada tahun …", o: ["1945, 1946, 1947, 1948", "1998, 1999, 2000, 2001", "1999, 2000, 2001, 2002", "2001, 2002, 2003, 2004", "2000, 2001, 2002, 2003"], a: 2 },
+        { q: "Sistem ketatanegaraan setelah amandemen lebih menekankan prinsip …", o: ["sentralisasi kekuasaan", "checks and balances", "demokrasi terpimpin", "monarki konstitusional", "supremasi lembaga tertentu"], a: 1 },
+        { q: "Pernyataan yang sesuai dengan keadaan sebelum amandemen UUD 1945 adalah …", o: ["Presiden dipilih langsung oleh rakyat", "MPR bukan lembaga tertinggi", "Presiden dipilih oleh MPR", "DPD sudah ada dalam struktur ketatanegaraan", "MK sudah berfungsi sebagai penguji undang-undang"], a: 2 },
+        { q: "UUD 1945 disebut sebagai hukum dasar tertulis karena …", o: ["disusun oleh rakyat secara langsung", "memuat aturan-aturan pokok dalam bentuk tertulis", "berlaku hanya pada masa revolusi", "hanya mengatur lembaga yudikatif", "dapat diubah oleh Presiden kapan saja"], a: 1 },
+        { q: "Salah satu ciri utama sistem ketatanegaraan setelah amandemen adalah …", o: ["kekuasaan terpusat pada MPR", "tidak ada lembaga yang saling mengawasi", "pembagian kekuasaan antar lembaga negara", "Presiden menjadi satu-satunya pemegang kedaulatan", "semua lembaga berada di bawah DPR"], a: 2 },
+        { q: "Alinea kedua Pembukaan UUD 1945 menekankan …", o: ["pengakuan bahwa kemerdekaan adalah rahmat Tuhan", "perjuangan bangsa Indonesia mencapai kemerdekaan", "penolakan terhadap penjajahan", "tujuan negara Indonesia", "kedudukan MPR sebagai lembaga tertinggi"], a: 1 },
+        { q: "Apabila suatu soal menanyakan lembaga yang menguji peraturan perundang-undangan di bawah undang-undang, jawaban yang tepat adalah …", o: ["MA", "MK", "DPR", "DPD", "BPK"], a: 0 },
+        { q: "Pancasila dikatakan sebagai jiwa dari UUD 1945 karena …", o: ["Pancasila memuat pasal-pasal negara", "UUD 1945 bersumber dari nilai-nilai Pancasila", "Pancasila disahkan oleh MK", "Pancasila adalah peraturan teknis pemerintahan", "UUD 1945 menggantikan Pancasila"], a: 1 },
+        { q: "Tujuan negara Indonesia tercantum secara tegas dalam …", o: ["alinea pertama Pembukaan UUD 1945", "alinea kedua Pembukaan UUD 1945", "alinea ketiga Pembukaan UUD 1945", "alinea keempat Pembukaan UUD 1945", "batang tubuh UUD 1945"], a: 3 },
+        { q: "Lembaga yang melantik Presiden menurut ketentuan UUD 1945 adalah …", o: ["DPR", "DPD", "MPR", "MA", "BPK"], a: 2 },
+        { q: "Dampak penting amandemen UUD 1945 bagi kedudukan Presiden adalah …", o: ["Presiden dapat menjabat tanpa batas", "Presiden tidak lagi memiliki kekuasaan pemerintahan", "masa jabatan Presiden dibatasi", "Presiden dipilih kembali oleh DPR", "Presiden menjadi bawahan MPR"], a: 2 },
+        { q: "Seorang siswa menyatakan bahwa “UUD 1945 adalah dasar negara Indonesia.” Pernyataan tersebut kurang tepat, karena yang menjadi dasar negara adalah …", o: ["Tap MPR", "Pancasila", "Piagam Jakarta", "UUD Sementara", "Pembukaan UUD 1945 bagian pasal-pasal"], a: 1 },
+        { q: "Dalam suatu soal, disebutkan ada lembaga yang membentuk undang-undang bersama Presiden, tetapi tidak memeriksa keuangan negara. Lembaga tersebut adalah …", o: ["MPR", "DPR", "DPD", "BPK", "MK"], a: 1 },
+        { q: "Jika sebuah aturan daerah bertentangan dengan undang-undang, namun tidak bertentangan langsung dengan UUD 1945, lembaga yang paling tepat untuk menguji pada tingkat peraturan di bawah undang-undang adalah …", o: ["MA", "MK", "BPK", "MPR", "DPR"], a: 0 },
+        { q: "Pasangan yang paling tepat antara lembaga dan kewenangannya adalah …", o: ["MK — memeriksa keuangan negara", "MA — menguji undang-undang terhadap UUD 1945", "DPR — membentuk undang-undang bersama Presiden", "BPK — melantik Presiden", "DPD — menetapkan UUD 1945"], a: 2 },
+        { q: "Pernyataan yang paling sesuai dengan prinsip checks and balances setelah amandemen UUD 1945 adalah …", o: ["satu lembaga memiliki kekuasaan paling tinggi", "seluruh lembaga saling mendukung tanpa pengawasan", "kekuasaan antar lembaga negara dibatasi dan saling mengawasi", "Presiden dapat membubarkan DPR sewaktu-waktu", "MPR menentukan semua kebijakan negara secara tunggal"], a: 2 },
+        { q: "Yang bukan merupakan hasil amandemen UUD 1945 adalah …", o: ["pembatasan masa jabatan Presiden", "pembentukan MK", "pembentukan DPD", "MPR tetap sebagai lembaga tertinggi negara", "pemilihan Presiden secara langsung"], a: 3 },
+        { q: "Apabila diminta memilih urutan yang benar dari lembaga yang terkait dengan pembahasan materi, urutan yang tepat adalah …", o: ["BPUPKI → PPKI → Panitia Sembilan", "Panitia Sembilan → BPUPKI → PPKI", "BPUPKI → Panitia Sembilan → PPKI", "PPKI → BPUPKI → Panitia Sembilan", "MPR → DPR → DPD"], a: 2 },
+        { q: "Seorang peserta ujian membedakan fungsi lembaga negara sebagai berikut: “lembaga X menguji undang-undang terhadap UUD 1945, sedangkan lembaga Y menguji peraturan di bawah undang-undang.” Pasangan yang benar adalah …", o: ["X = MA, Y = MK", "X = MK, Y = MA", "X = DPR, Y = DPD", "X = BPK, Y = MPR", "X = MPR, Y = DPR"], a: 1 },
+        { q: "Manakah pernyataan yang paling tepat mengenai hubungan isi Pembukaan UUD 1945 dan Pancasila?", o: ["Pembukaan UUD 1945 hanya berisi sejarah bangsa, sedangkan Pancasila tidak disebut", "Alinea keempat Pembukaan memuat tujuan negara sekaligus dasar negara Pancasila", "Pancasila hanya muncul dalam batang tubuh UUD 1945", "Pancasila merupakan aturan peralihan", "Pembukaan UUD 1945 tidak memiliki kaitan dengan Pancasila"], a: 1 },
+        { q: "Jika dalam sebuah soal disebutkan bahwa lembaga negara harus saling membatasi agar tidak ada kekuasaan yang dominan, maka konsep ketatanegaraan yang dimaksud adalah …", o: ["monopoli kekuasaan", "checks and balances", "supremasi parlemen mutlak", "otokrasi konstitusional", "kekuasaan terpusat"], a: 1 }
+    ];
 
-let curIdx = 0, score = 0, time = 0, active = false, pick = -1;
+    let currentIdx = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    let userDoubts = new Array(questions.length).fill(false);
+    let timeLeft = 30 * 60;
+    let timer;
 
-function startApp() {
-    document.getElementById('start-screen').classList.remove('active');
-    document.getElementById('quiz-screen').classList.add('active');
-    active = true;
-    setInterval(() => { if(active) { time++; updateMeta(); } }, 1000);
-    loadQ();
-}
-
-function updateMeta() {
-    let m = Math.floor(time/60).toString().padStart(2,'0');
-    let s = (time%60).toString().padStart(2,'0');
-    document.getElementById('timer').innerText = `${m}:${s}`;
-    document.getElementById('q-number').innerText = `ARTWORK ${curIdx + 1}/50`;
-}
-
-function loadQ() {
-    pick = -1;
-    const data = artBank[curIdx];
-    document.getElementById('q-text').innerText = data.q;
-    document.getElementById('exp-box').style.display = 'none';
-    document.getElementById('action-btn').innerText = "ANALISIS JAWABAN";
-    
-    const optsDiv = document.getElementById('options');
-    optsDiv.innerHTML = "";
-    data.a.forEach((o, i) => {
-        const d = document.createElement('div');
-        d.className = 'opt';
-        d.innerHTML = `<strong>${String.fromCharCode(65+i)}.</strong> &nbsp; ${o}`;
-        d.onclick = () => { if(document.getElementById('exp-box').style.display === 'none') {
-            document.querySelectorAll('.opt').forEach(x => x.classList.remove('selected'));
-            d.classList.add('selected'); pick = i;
-        }};
-        optsDiv.appendChild(d);
-    });
-}
-
-function handleAction() {
-    const btn = document.getElementById('action-btn');
-    if(btn.innerText === "ANALISIS JAWABAN") {
-        if(pick === -1) return alert("Tentukan pilihan apresiasimu!");
-        reveal();
-        btn.innerText = (curIdx === 49) ? "SELESAIKAN PAMERAN" : "LANJUTKAN";
-    } else {
-        if(curIdx < 49) { curIdx++; loadQ(); } else { endApp(); }
+    function startExam() {
+        document.getElementById('intro-screen').style.display = 'none';
+        document.getElementById('exam-screen').style.display = 'flex';
+        renderNav();
+        showQuestion(0);
+        timer = setInterval(updateTimer, 1000);
     }
-}
 
-function reveal() {
-    const data = artBank[curIdx], opts = document.querySelectorAll('.opt');
-    opts[data.c].classList.add('is-correct');
-    if(pick !== data.c) opts[pick].classList.add('is-wrong');
-    else score++;
-    const exp = document.getElementById('exp-box');
-    exp.innerHTML = `<strong>KURASI:</strong> ${data.e}`;
-    exp.style.display = 'block';
-}
+    function renderNav() {
+        const grid = document.getElementById('nav-grid');
+        grid.innerHTML = '';
+        questions.forEach((_, i) => {
+            const div = document.createElement('div');
+            div.className = 'nav-num';
+            div.id = `nav-${i}`;
+            div.innerText = i + 1;
+            div.onclick = () => showQuestion(i);
+            grid.appendChild(div);
+        });
+    }
 
-function endApp() {
-    active = false;
-    document.getElementById('quiz-screen').classList.remove('active');
-    document.getElementById('result-screen').classList.add('active');
-    const fScore = Math.round((score/50)*100);
-    document.getElementById('final-score').innerText = fScore;
-    let msg = fScore >= 80 ? "Kamu adalah seorang Kurator Seni sejati! Pemahamanmu sangat mendalam." : 
-              fScore >= 60 ? "Apresiasi yang bagus! Kamu memiliki minat seni yang kuat." : 
-              "Teruslah mengeksplorasi dunia seni, setiap karya punya makna untukmu.";
-    document.getElementById('feedback-text').innerText = msg + `\n\nSkor: ${score} dari 50 soal dalam waktu ${document.getElementById('timer').innerText}`;
-}
+    function showQuestion(idx) {
+        currentIdx = idx;
+        const q = questions[idx];
+        document.getElementById('q-label').innerText = `SOAL NOMOR ${idx + 1}`;
+        document.getElementById('q-text').innerText = q.q;
+        document.getElementById('progress-header').innerText = `Soal ${idx + 1} dari ${questions.length}`;
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        
+        ['A','B','C','D','E'].forEach((label, i) => {
+            const div = document.createElement('div');
+            div.className = `option-item ${userAnswers[idx] === i ? 'selected' : ''}`;
+            div.onclick = () => selectOption(i);
+            div.innerHTML = `<span style="width:30px; font-weight:bold;">${label}.</span> <span>${q.o[i]}</span>`;
+            container.appendChild(div);
+        });
+
+        document.getElementById('btn-next').style.display = (idx === questions.length -1) ? 'none' : 'block';
+        document.getElementById('btn-finish').style.display = (idx === questions.length -1) ? 'block' : 'none';
+        updateNavStyles();
+    }
+
+    function selectOption(i) {
+        userAnswers[currentIdx] = i;
+        userDoubts[currentIdx] = false;
+        showQuestion(currentIdx);
+    }
+
+    function markDoubt() {
+        userDoubts[currentIdx] = !userDoubts[currentIdx];
+        updateNavStyles();
+    }
+
+    function changeQuestion(dir) {
+        let newIdx = currentIdx + dir;
+        if(newIdx >= 0 && newIdx < questions.length) showQuestion(newIdx);
+    }
+
+    function updateNavStyles() {
+        questions.forEach((_, i) => {
+            const el = document.getElementById(`nav-${i}`);
+            el.className = 'nav-num';
+            if(userAnswers[i] !== null) el.classList.add('answered');
+            if(userDoubts[i]) el.classList.add('doubt');
+            if(i === currentIdx) el.classList.add('active');
+        });
+    }
+
+    function updateTimer() {
+        timeLeft--;
+        if(timeLeft <= 0) finishExam();
+        const m = Math.floor(timeLeft / 60);
+        const s = timeLeft % 60;
+        document.getElementById('timer').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+
+    function showConfirm() { document.getElementById('modal-overlay').style.display = 'flex'; }
+    function hideConfirm() { document.getElementById('modal-overlay').style.display = 'none'; }
+
+    function finishExam() {
+        clearInterval(timer);
+        hideConfirm();
+        let score = 0;
+        userAnswers.forEach((ans, i) => { if(ans === questions[i].a) score += 5; });
+
+        document.getElementById('exam-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('score-text').innerText = score;
+        
+        const status = document.getElementById('status-tag');
+        if(score >= 65) {
+            status.innerText = "LULUS";
+            status.style.color = "#28a745";
+        } else {
+            status.innerText = "TIDAK LULUS";
+            status.style.color = "#dc3545";
+        }
+        document.getElementById('stats-detail').innerText = `Skor Anda: ${score} / 250`;
+    }
+
+    function showReview() {
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('review-screen').style.display = 'block';
+        const container = document.getElementById('review-content');
+        const labels = ['A','B','C','D','E'];
+
+        questions.forEach((q, i) => {
+            const isCorrect = userAnswers[i] === q.a;
+            const div = document.createElement('div');
+            div.className = 'review-card';
+            div.style.borderColor = isCorrect ? '#28a745' : '#dc3545';
+            div.innerHTML = `
+                <p><strong>Soal ${i+1}:</strong> ${q.q}</p>
+                <p>Jawaban Anda: <span style="color:${isCorrect ? 'green' : 'red'}">${userAnswers[i] !== null ? labels[userAnswers[i]] : 'Kosong'}</span></p>
+                <p>Kunci Jawaban: <strong style="color:green">${labels[q.a]}</strong></p>
+            `;
+            container.appendChild(div);
+        });
+    }
 </script>
+
 </body>
 </html>
