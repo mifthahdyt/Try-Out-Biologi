@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAT Simulation - Tes Wawasan Kebangsaan</title>
+    <title>CAT Simulation - NKRI & Wawasan Nusantara</title>
     <style>
         :root {
-            --primary: #0056b3;
-            --secondary: #6c757d;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --primary: #c0392b;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --warning: #f1c40f;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e9ecef;
+            background-color: #f4f7f6;
             color: var(--dark);
             line-height: 1.6;
         }
@@ -39,32 +39,33 @@
 
         .card {
             background: white;
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 12px;
             box-shadow: var(--shadow);
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
             text-align: center;
         }
 
         .btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.3s;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .btn-start { background: var(--primary); color: white; width: 100%; margin-top: 20px; font-size: 1.1rem; }
-        .btn-start:hover { background: #004494; transform: translateY(-2px); }
+        .btn-start:hover { background: #a93226; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(192, 57, 43, 0.3); }
 
         /* Exam Screen */
         #exam-screen { display: none; flex-direction: column; height: 100vh; }
 
         header {
-            background: var(--primary);
+            background: var(--secondary);
             color: white;
             padding: 15px 25px;
             display: flex;
@@ -74,24 +75,25 @@
         }
 
         .timer-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 8px 15px;
-            border-radius: 50px;
+            background: #fff;
+            color: var(--danger);
+            padding: 8px 20px;
+            border-radius: 6px;
             font-weight: bold;
-            font-family: monospace;
-            font-size: 1.2rem;
-            border: 1px solid white;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.4rem;
+            border: 2px solid var(--danger);
         }
 
         .main-content {
             display: flex;
             flex: 1;
-            padding: 20px;
-            gap: 20px;
+            padding: 25px;
+            gap: 25px;
             overflow: hidden;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 850px) {
             .main-content { flex-direction: column; overflow-y: auto; }
             #exam-screen { height: auto; }
         }
@@ -99,33 +101,33 @@
         .question-card {
             flex: 3;
             background: white;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: var(--shadow);
-            padding: 30px;
+            padding: 35px;
             display: flex;
             flex-direction: column;
         }
 
-        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 25px; }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 25px; color: #1a252f; }
 
         .option-item {
             display: flex;
             padding: 15px;
             margin-bottom: 12px;
-            border: 2px solid #dee2e6;
+            border: 2px solid #e0e6ed;
             border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
         }
 
         .option-item:hover { background: #f8f9fa; border-color: var(--primary); }
-        .option-item.selected { background: #e7f1ff; border-color: var(--primary); font-weight: bold; }
+        .option-item.selected { background: #fdf2f2; border-color: var(--primary); font-weight: bold; }
 
         /* Navigation Sidebar */
         .nav-sidebar {
             flex: 1;
             background: white;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 20px;
             box-shadow: var(--shadow);
             max-height: 100%;
@@ -140,28 +142,28 @@
         }
 
         .nav-num {
-            height: 40px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 1px solid #dee2e6;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.8rem;
-            background: #f8f9fa;
+            font-size: 0.85rem;
+            background: #fff;
         }
 
         .nav-num.answered { background: var(--success); color: white; border-color: var(--success); }
         .nav-num.doubt { background: var(--warning); color: black; border-color: var(--warning); }
-        .nav-num.active { border: 2px solid var(--dark); font-weight: bold; }
+        .nav-num.active { border: 3px solid var(--dark); font-weight: bold; }
 
         .controls { display: flex; justify-content: space-between; margin-top: auto; padding-top: 30px; gap: 10px; }
-        .btn-nav { background: var(--secondary); color: white; }
-        .btn-finish { background: var(--danger); color: white; }
+        .btn-nav { background: #95a5a6; color: white; flex: 1; }
+        .btn-finish { background: var(--success); color: white; flex: 1; }
 
         #modal-overlay {
             display: none; position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;
+            background: rgba(0,0,0,0.7); z-index:1000; justify-content:center; align-items:center;
         }
 
         #result-screen, #review-screen { display: none; padding: 40px 20px; }
@@ -172,46 +174,46 @@
 
 <div id="intro-screen" class="fade-in">
     <div class="card">
-        <h1 style="color: var(--primary); margin-bottom: 10px;">Simulasi CAT TWK 2026</h1>
-        <p style="margin-bottom: 20px;">Selamat datang di platform simulasi Tes Wawasan Kebangsaan.</p>
-        <div style="text-align: left; background: var(--light); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            <strong>Ketentuan Simulasi:</strong>
-            <ul style="margin-left: 20px; margin-top: 10px; font-size: 0.9rem;">
-                <li>Total Soal: 50 Butir</li>
-                <li>Waktu Pengerjaan: 30 Menit</li>
-                <li>Passing Grade: Skor 65</li>
-                <li>Navigasi bebas (bisa lompat soal)</li>
+        <h1 style="color: var(--primary); margin-bottom: 10px;">Simulasi CAT TWK</h1>
+        <h2 style="color: var(--secondary); margin-bottom: 20px;">Materi: NKRI & Wawasan Nusantara</h2>
+        <div style="text-align: left; background: var(--light); padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+            <strong>Petunjuk Pengerjaan:</strong>
+            <ul style="margin-left: 20px; margin-top: 10px; font-size: 0.95rem;">
+                <li>Jumlah Soal: 50 Butir</li>
+                <li>Waktu: 30 Menit</li>
+                <li>Passing Grade: Skor 65 (Benar 13 soal)</li>
+                <li>Klik nomor soal di samping untuk melompat soal</li>
             </ul>
         </div>
-        <button class="btn btn-start" onclick="startExam()">Mulai Simulasi</button>
+        <button class="btn btn-start" onclick="startExam()">Mulai Simulasi Sekarang</button>
     </div>
 </div>
 
 <div id="exam-screen">
     <header>
         <div>
-            <strong style="letter-spacing: 1px;">CAT SYSTEM</strong>
-            <div id="progress-header" style="font-size: 0.75rem; opacity: 0.9;">Memuat soal...</div>
+            <strong style="letter-spacing: 1px;">CAT SYSTEM V.2026</strong>
+            <div id="progress-header" style="font-size: 0.8rem; opacity: 0.9;">Memuat soal...</div>
         </div>
         <div class="timer-badge" id="timer">30:00</div>
     </header>
 
     <div class="main-content">
         <div class="question-card fade-in">
-            <div style="color: var(--secondary); font-weight: bold; margin-bottom: 10px;" id="q-label">SOAL</div>
+            <div style="color: var(--secondary); font-weight: bold; margin-bottom: 10px; font-size: 0.9rem;" id="q-label">SOAL</div>
             <div class="question-text" id="q-text">Sedang memuat pertanyaan...</div>
             <div id="options-container"></div>
             
             <div class="controls">
                 <button class="btn btn-nav" onclick="changeQuestion(-1)">Sebelumnya</button>
                 <button class="btn btn-nav" style="background: var(--warning); color: black;" onclick="markDoubt()">Ragu-Ragu</button>
-                <button class="btn btn-nav" id="btn-next" style="background: var(--primary);" onclick="changeQuestion(1)">Selanjutnya</button>
-                <button class="btn btn-finish" id="btn-finish" style="display:none;" onclick="showConfirm()">Selesai</button>
+                <button class="btn btn-nav" id="btn-next" style="background: var(--secondary);" onclick="changeQuestion(1)">Selanjutnya</button>
+                <button class="btn btn-finish" id="btn-finish" style="display:none;" onclick="showConfirm()">Selesai Ujian</button>
             </div>
         </div>
 
         <div class="nav-sidebar">
-            <h4 style="font-size: 0.9rem; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Daftar Soal</h4>
+            <h4 style="font-size: 0.9rem; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;">Daftar Navigasi Soal</h4>
             <div class="nav-grid" id="nav-grid"></div>
         </div>
     </div>
@@ -219,86 +221,85 @@
 
 <div id="modal-overlay">
     <div class="card" style="max-width: 400px;">
-        <h3>Selesaikan Ujian?</h3>
-        <p style="margin: 15px 0;">Pastikan semua jawaban sudah terisi dengan benar.</p>
+        <h3>Kirim Jawaban?</h3>
+        <p style="margin: 15px 0; color: #666;">Apakah Anda yakin ingin mengakhiri ujian ini dan melihat skor?</p>
         <div style="display: flex; gap: 10px;">
-            <button class="btn btn-finish" style="flex: 1;" onclick="finishExam()">Ya, Selesai</button>
-            <button class="btn btn-nav" style="flex: 1;" onclick="hideConfirm()">Batal</button>
+            <button class="btn btn-start" style="flex: 1;" onclick="finishExam()">Ya, Selesai</button>
+            <button class="btn btn-nav" style="flex: 1; background: #95a5a6;" onclick="hideConfirm()">Batal</button>
         </div>
     </div>
 </div>
 
 <div id="result-screen" class="fade-in">
     <div class="card" style="margin: auto;">
-        <h2 id="status-tag">HASIL</h2>
-        <div style="font-size: 4rem; font-weight: bold; margin: 10px 0; color: var(--primary);" id="score-text">0</div>
-        <p id="stats-detail" style="font-weight: 500;"></p>
-        <div style="margin-top: 25px; display: flex; gap: 10px;">
-            <button class="btn btn-start" onclick="showReview()" style="margin:0; flex:1;">Review</button>
-            <button class="btn btn-nav" onclick="location.reload()" style="flex:1;">Ulangi</button>
+        <h2 id="status-tag">HASIL AKHIR</h2>
+        <div style="font-size: 5rem; font-weight: bold; margin: 15px 0; color: var(--primary);" id="score-text">0</div>
+        <p id="stats-detail" style="font-weight: 500; font-size: 1.1rem;"></p>
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
+            <button class="btn btn-start" onclick="showReview()" style="margin:0; flex:1; background: var(--secondary);">Review Jawaban</button>
+            <button class="btn btn-nav" onclick="location.reload()" style="flex:1;">Ulangi Tes</button>
         </div>
     </div>
 </div>
 
 <div id="review-screen" class="fade-in">
-    <h2 style="margin-bottom: 25px; text-align: center;">Review Jawaban</h2>
-    <div id="review-content" style="max-width: 800px; margin: auto;"></div>
-    <center><button class="btn btn-nav" onclick="location.reload()" style="margin: 30px;">Kembali</button></center>
+    <h1 style="margin-bottom: 30px; text-align: center; color: var(--secondary);">Review Pembahasan</h1>
+    <div id="review-content" style="max-width: 850px; margin: auto;"></div>
+    <center><button class="btn btn-start" onclick="location.reload()" style="margin: 40px; background: var(--secondary);">Selesai Review</button></center>
 </div>
 
 <script>
-    // Data soal disingkat untuk efisiensi kode di sini (masukkan 50 soal lengkap Anda di array ini)
     const questions = [
-        { q: "UUD 1945 pada dasarnya merupakan …", o: ["hukum adat tertulis yang berlaku di daerah", "hukum dasar tertulis tertinggi dalam negara Indonesia", "peraturan presiden yang mengatur lembaga negara", "keputusan MPR yang bersifat sementara", "pedoman moral dalam kehidupan masyarakat"], a: 1 },
-        { q: "Perbedaan yang paling tepat antara Pancasila dan UUD 1945 adalah …", o: ["Pancasila mengatur pasal-pasal, UUD 1945 memuat nilai dasar", "Pancasila adalah dasar negara, sedangkan UUD 1945 adalah hukum dasar negara", "Pancasila bersifat teknis, sedangkan UUD 1945 bersifat ideologis", "Pancasila hanya berlaku pada masa kemerdekaan, sedangkan UUD 1945 berlaku selamanya", "Pancasila dan UUD 1945 memiliki kedudukan yang sama sebagai hukum tertulis"], a: 1 },
-        { q: "UUD 1945 disahkan pada tanggal …", o: ["1 Juni 1945", "17 Agustus 1945", "18 Agustus 1945", "22 Juni 1945", "19 Agustus 1945"], a: 2 },
-        { q: "Lembaga yang mempersiapkan rancangan konstitusi Indonesia sebelum kemerdekaan adalah …", o: ["PPKI", "MPR", "DPR", "BPUPKI", "BPK"], a: 3 },
-        { q: "Panitia Sembilan menghasilkan dokumen yang dikenal sebagai …", o: ["Deklarasi Jakarta", "Piagam Jakarta", "UUD Sementara", "Naskah Proklamasi", "Ketetapan MPR"], a: 1 },
-        { q: "Tahap yang tepat dalam sejarah perumusan UUD 1945 adalah …", o: ["PPKI menyiapkan konstitusi, BPUPKI mengesahkan, Panitia Sembilan menyusun", "BPUPKI menyiapkan konstitusi, Panitia Sembilan menyusun Piagam Jakarta, PPKI mengesahkan UUD", "Panitia Sembilan mengesahkan UUD, PPKI menyusun Piagam Jakarta, BPUPKI membubarkan diri", "MPR menyusun konstitusi, DPR membahas, MK mengesahkan", "Pancasila dirumuskan setelah UUD 1945 disahkan"], a: 1 },
-        { q: "Pembukaan UUD 1945 terdiri atas …", o: ["tiga alinea", "empat alinea", "lima alinea", "enam alinea", "tujuh alinea"], a: 1 },
-        { q: "Makna alinea pertama Pembukaan UUD 1945 adalah …", o: ["bangsa Indonesia menjunjung persatuan", "bangsa Indonesia menolak penjajahan", "bangsa Indonesia berserah kepada Tuhan", "bangsa Indonesia memilih demokrasi", "bangsa Indonesia berhak memerintah sendiri"], a: 1 },
-        { q: "Makna alinea ketiga Pembukaan UUD 1945 berkaitan dengan …", o: ["perjuangan rakyat melawan penjajah", "rahmat Tuhan Yang Maha Esa", "tujuan negara Indonesia", "kemerdekaan sebagai hasil perundingan", "penegasan bentuk negara kesatuan"], a: 1 },
-        { q: "Alinea keempat Pembukaan UUD 1945 memuat …", o: ["sejarah perjuangan bangsa semata", "tujuan negara dan dasar negara Pancasila", "penjelasan sistem ekonomi nasional", "susunan lembaga negara", "aturan peralihan dan aturan tambahan"], a: 1 },
-        { q: "Bagian UUD 1945 yang berisi pasal-pasal adalah …", o: ["Pembukaan", "Batang tubuh", "Aturan peralihan", "Aturan tambahan", "Penjelasan"], a: 1 },
-        { q: "Bagian UUD 1945 yang berfungsi sebagai ketentuan sementara adalah …", o: ["Pembukaan", "Batang tubuh", "Aturan peralihan", "Aturan tambahan", "Penutup"], a: 2 },
-        { q: "Salah satu fungsi utama UUD 1945 adalah sebagai …", o: ["pedoman pembuatan peraturan daerah", "hukum dasar tertulis tertinggi", "keputusan lembaga yudikatif", "sumber hukum di bawah undang-undang", "pedoman kebiasaan masyarakat"], a: 1 },
-        { q: "Hubungan yang tepat antara Pancasila dan UUD 1945 adalah …", o: ["Pancasila merupakan aturan teknis, UUD 1945 merupakan nilai-nilai dasar", "Pancasila menjadi jiwa, sedangkan UUD 1945 menjadi aturan dasar", "Pancasila berada di bawah UUD 1945", "UUD 1945 menjadi dasar moral, Pancasila menjadi pedoman hukum", "Keduanya tidak saling berhubungan"], a: 1 },
-        { q: "Pasal UUD 1945 yang berkaitan erat dengan hak asasi manusia antara lain …", o: ["Pasal 1 dan 2", "Pasal 20 dan 21", "Pasal 27 dan Pasal 28A–28J", "Pasal 37 dan 38", "Pasal 24 dan 25"], a: 2 },
-        { q: "Jika terdapat peraturan yang bertentangan dengan undang-undang, lembaga yang berwenang menguji adalah …", o: ["MPR", "MA", "MK", "DPR", "DPD"], a: 1 },
-        { q: "Jika yang diuji adalah undang-undang terhadap UUD 1945, lembaga yang berwenang adalah …", o: ["MA", "MK", "BPK", "DPR", "MPR"], a: 1 },
-        { q: "Lembaga yang memeriksa pengelolaan dan tanggung jawab keuangan negara adalah …", o: ["BPK", "MK", "MA", "DPR", "DPD"], a: 0 },
-        { q: "Presiden memegang kekuasaan pemerintahan menurut …", o: ["MPR", "UUD 1945", "Tap MPR", "UU Pemilu", "Peraturan Presiden"], a: 1 },
-        { q: "Masa jabatan Presiden menurut ketentuan UUD 1945 adalah …", o: ["4 tahun dan dapat dipilih kembali tanpa batas", "5 tahun dan dapat dipilih kembali satu kali", "5 tahun dan tidak boleh dipilih kembali", "6 tahun dan dapat dipilih kembali dua kali", "7 tahun dan dipilih oleh MPR"], a: 1 },
-        { q: "Jumlah maksimal masa jabatan Presiden adalah …", o: ["1 periode", "2 periode", "3 periode", "4 periode", "tanpa batas"], a: 1 },
-        { q: "Setelah amandemen UUD 1945, kedudukan MPR adalah …", o: ["lembaga tertinggi negara", "lembaga di atas Presiden", "setara dengan lembaga negara lain dalam sistem checks and balances", "badan pembentuk undang-undang tunggal", "lembaga yang membawahi MA dan MK"], a: 2 },
-        { q: "Anggota MPR terdiri atas …", o: ["DPR dan DPD", "DPR dan MA", "DPD dan BPK", "Presiden dan DPR", "MK dan MA"], a: 0 },
-        { q: "Fungsi DPR yang benar adalah …", o: ["menguji undang-undang terhadap UUD 1945", "membentuk undang-undang bersama Presiden", "memeriksa keuangan negara", "melantik Presiden", "mengadili sengketa hasil pemilu"], a: 1 },
-        { q: "DPD merupakan lembaga perwakilan yang mewakili …", o: ["kementerian", "rakyat secara umum", "daerah", "partai politik", "lembaga yudikatif"], a: 2 },
-        { q: "Pernyataan yang paling tepat mengenai DPD adalah …", o: ["memiliki kewenangan membentuk undang-undang sepenuhnya", "merupakan wakil daerah yang dapat mengajukan RUU tertentu", "menggantikan fungsi DPR", "memiliki kewenangan menguji undang-undang", "berwenang memeriksa keuangan negara"], a: 1 },
-        { q: "Lembaga yang berwenang menetapkan dan mengubah UUD 1945 adalah …", o: ["DPR", "DPD", "MPR", "MK", "BPK"], a: 2 },
-        { q: "Berikut ini yang termasuk hasil penting amandemen UUD 1945 adalah …", o: ["Presiden menjadi tidak terbatas masa jabatannya", "MPR kembali menjadi lembaga tertinggi negara", "Munculnya MK dan DPD", "DPR dibubarkan", "UUD 1945 tidak lagi berlaku"], a: 2 },
-        { q: "Amandemen UUD 1945 dilakukan sebanyak …", o: ["1 kali", "2 kali", "3 kali", "4 kali", "5 kali"], a: 3 },
-        { q: "Amandemen UUD 1945 dilakukan pada tahun …", o: ["1945, 1946, 1947, 1948", "1998, 1999, 2000, 2001", "1999, 2000, 2001, 2002", "2001, 2002, 2003, 2004", "2000, 2001, 2002, 2003"], a: 2 },
-        { q: "Sistem ketatanegaraan setelah amandemen lebih menekankan prinsip …", o: ["sentralisasi kekuasaan", "checks and balances", "demokrasi terpimpin", "monarki konstitusional", "supremasi lembaga tertentu"], a: 1 },
-        { q: "Pernyataan yang sesuai dengan keadaan sebelum amandemen UUD 1945 adalah …", o: ["Presiden dipilih langsung oleh rakyat", "MPR bukan lembaga tertinggi", "Presiden dipilih oleh MPR", "DPD sudah ada dalam struktur ketatanegaraan", "MK sudah berfungsi sebagai penguji undang-undang"], a: 2 },
-        { q: "UUD 1945 disebut sebagai hukum dasar tertulis karena …", o: ["disusun oleh rakyat secara langsung", "memuat aturan-aturan pokok dalam bentuk tertulis", "berlaku hanya pada masa revolusi", "hanya mengatur lembaga yudikatif", "dapat diubah oleh Presiden kapan saja"], a: 1 },
-        { q: "Salah satu ciri utama sistem ketatanegaraan setelah amandemen adalah …", o: ["kekuasaan terpusat pada MPR", "tidak ada lembaga yang saling mengawasi", "pembagian kekuasaan antar lembaga negara", "Presiden menjadi satu-satunya pemegang kedaulatan", "semua lembaga berada di bawah DPR"], a: 2 },
-        { q: "Alinea kedua Pembukaan UUD 1945 menekankan …", o: ["pengakuan bahwa kemerdekaan adalah rahmat Tuhan", "perjuangan bangsa Indonesia mencapai kemerdekaan", "penolakan terhadap penjajahan", "tujuan negara Indonesia", "kedudukan MPR sebagai lembaga tertinggi"], a: 1 },
-        { q: "Apabila suatu soal menanyakan lembaga yang menguji peraturan perundang-undangan di bawah undang-undang, jawaban yang tepat adalah …", o: ["MA", "MK", "DPR", "DPD", "BPK"], a: 0 },
-        { q: "Pancasila dikatakan sebagai jiwa dari UUD 1945 karena …", o: ["Pancasila memuat pasal-pasal negara", "UUD 1945 bersumber dari nilai-nilai Pancasila", "Pancasila disahkan oleh MK", "Pancasila adalah peraturan teknis pemerintahan", "UUD 1945 menggantikan Pancasila"], a: 1 },
-        { q: "Tujuan negara Indonesia tercantum secara tegas dalam …", o: ["alinea pertama Pembukaan UUD 1945", "alinea kedua Pembukaan UUD 1945", "alinea ketiga Pembukaan UUD 1945", "alinea keempat Pembukaan UUD 1945", "batang tubuh UUD 1945"], a: 3 },
-        { q: "Lembaga yang melantik Presiden menurut ketentuan UUD 1945 adalah …", o: ["DPR", "DPD", "MPR", "MA", "BPK"], a: 2 },
-        { q: "Dampak penting amandemen UUD 1945 bagi kedudukan Presiden adalah …", o: ["Presiden dapat menjabat tanpa batas", "Presiden tidak lagi memiliki kekuasaan pemerintahan", "masa jabatan Presiden dibatasi", "Presiden dipilih kembali oleh DPR", "Presiden menjadi bawahan MPR"], a: 2 },
-        { q: "Seorang siswa menyatakan bahwa “UUD 1945 adalah dasar negara Indonesia.” Pernyataan tersebut kurang tepat, karena yang menjadi dasar negara adalah …", o: ["Tap MPR", "Pancasila", "Piagam Jakarta", "UUD Sementara", "Pembukaan UUD 1945 bagian pasal-pasal"], a: 1 },
-        { q: "Dalam suatu soal, disebutkan ada lembaga yang membentuk undang-undang bersama Presiden, tetapi tidak memeriksa keuangan negara. Lembaga tersebut adalah …", o: ["MPR", "DPR", "DPD", "BPK", "MK"], a: 1 },
-        { q: "Jika sebuah aturan daerah bertentangan dengan undang-undang, namun tidak bertentangan langsung dengan UUD 1945, lembaga yang paling tepat untuk menguji pada tingkat peraturan di bawah undang-undang adalah …", o: ["MA", "MK", "BPK", "MPR", "DPR"], a: 0 },
-        { q: "Pasangan yang paling tepat antara lembaga dan kewenangannya adalah …", o: ["MK — memeriksa keuangan negara", "MA — menguji undang-undang terhadap UUD 1945", "DPR — membentuk undang-undang bersama Presiden", "BPK — melantik Presiden", "DPD — menetapkan UUD 1945"], a: 2 },
-        { q: "Pernyataan yang paling sesuai dengan prinsip checks and balances setelah amandemen UUD 1945 adalah …", o: ["satu lembaga memiliki kekuasaan paling tinggi", "seluruh lembaga saling mendukung tanpa pengawasan", "kekuasaan antar lembaga negara dibatasi dan saling mengawasi", "Presiden dapat membubarkan DPR sewaktu-waktu", "MPR menentukan semua kebijakan negara secara tunggal"], a: 2 },
-        { q: "Yang bukan merupakan hasil amandemen UUD 1945 adalah …", o: ["pembatasan masa jabatan Presiden", "pembentukan MK", "pembentukan DPD", "MPR tetap sebagai lembaga tertinggi negara", "pemilihan Presiden secara langsung"], a: 3 },
-        { q: "Apabila diminta memilih urutan yang benar dari lembaga yang terkait dengan pembahasan materi, urutan yang tepat adalah …", o: ["BPUPKI → PPKI → Panitia Sembilan", "Panitia Sembilan → BPUPKI → PPKI", "BPUPKI → Panitia Sembilan → PPKI", "PPKI → BPUPKI → Panitia Sembilan", "MPR → DPR → DPD"], a: 2 },
-        { q: "Seorang peserta ujian membedakan fungsi lembaga negara sebagai berikut: “lembaga X menguji undang-undang terhadap UUD 1945, sedangkan lembaga Y menguji peraturan di bawah undang-undang.” Pasangan yang benar adalah …", o: ["X = MA, Y = MK", "X = MK, Y = MA", "X = DPR, Y = DPD", "X = BPK, Y = MPR", "X = MPR, Y = DPR"], a: 1 },
-        { q: "Manakah pernyataan yang paling tepat mengenai hubungan isi Pembukaan UUD 1945 dan Pancasila?", o: ["Pembukaan UUD 1945 hanya berisi sejarah bangsa, sedangkan Pancasila tidak disebut", "Alinea keempat Pembukaan memuat tujuan negara sekaligus dasar negara Pancasila", "Pancasila hanya muncul dalam batang tubuh UUD 1945", "Pancasila merupakan aturan peralihan", "Pembukaan UUD 1945 tidak memiliki kaitan dengan Pancasila"], a: 1 },
-        { q: "Jika dalam sebuah soal disebutkan bahwa lembaga negara harus saling membatasi agar tidak ada kekuasaan yang dominan, maka konsep ketatanegaraan yang dimaksud adalah …", o: ["monopoli kekuasaan", "checks and balances", "supremasi parlemen mutlak", "otokrasi konstitusional", "kekuasaan terpusat"], a: 1 }
+        { q: "NKRI adalah singkatan dari ....", o: ["Negara Kedaulatan Republik Indonesia", "Negara Kesatuan Republik Indonesia", "Negara Konfederasi Republik Indonesia", "Negara Komunitas Republik Indonesia", "Negara Kesatuan Rakyat Indonesia"], a: 1 },
+        { q: "Wawasan Nusantara adalah ....", o: ["semboyan negara Indonesia", "dasar hukum negara Indonesia", "cara pandang bangsa Indonesia terhadap diri dan lingkungannya sebagai satu kesatuan", "sistem pemerintahan Indonesia", "bentuk negara bagian Indonesia"], a: 2 },
+        { q: "Sistem pemerintahan yang dianut Indonesia adalah ....", o: ["monarki", "parlementer", "federal", "presidensial", "konfederasi"], a: 3 },
+        { q: "Yang termasuk ancaman terhadap NKRI dari luar adalah ....", o: ["intoleransi antarkelompok", "konflik sosial", "radikalisme", "korupsi", "intervensi asing"], a: 4 },
+        { q: "Pasangan konsep berikut yang paling tepat adalah ....", o: ["Pancasila = dasar nilai; UUD 1945 = dasar hukum; Bhinneka Tunggal Ika = semboyan persatuan; NKRI = bentuk negara", "Pancasila = konstitusi; UUD 1945 = semboyan; Bhinneka Tunggal Ika = bentuk negara; NKRI = dasar hukum", "Pancasila = bentuk negara; UUD 1945 = dasar nilai; Bhinneka Tunggal Ika = dasar hukum; NKRI = semboyan", "Pancasila = sistem pemerintahan; UUD 1945 = dasar negara; Bhinneka Tunggal Ika = hukum adat; NKRI = negara bagian", "Pancasila = aturan daerah; UUD 1945 = lambang negara; Bhinneka Tunggal Ika = asas pemerintahan; NKRI = wilayah udara"], a: 0 },
+        { q: "Indonesia sebagai negara kesatuan berarti ....", o: ["setiap daerah memiliki kedaulatan penuh", "hanya ada satu negara dengan pemerintah pusat sebagai pemegang kekuasaan tertinggi", "terdapat beberapa negara bagian yang berdaulat", "pemerintah daerah lebih tinggi dari pemerintah pusat", "daerah dapat membuat konstitusi sendiri"], a: 1 },
+        { q: "Fungsi NKRI yang paling tepat adalah ....", o: ["mengganti kedudukan Pancasila", "menjadi dasar pembentukan partai politik", "membatasi hak warga negara", "menjaga persatuan dan melindungi wilayah serta rakyat Indonesia", "membentuk negara bagian di daerah"], a: 3 },
+        { q: "Wilayah NKRI mencakup ....", o: ["darat, laut, dan udara", "darat dan laut saja", "laut dan udara saja", "darat dan udara saja", "darat, laut, dan daratan pulau luar saja"], a: 0 },
+        { q: "Pernyataan yang benar tentang negara federal adalah ....", o: ["seluruh wilayah berada di bawah satu pemerintah pusat tanpa pembagian kedaulatan", "daerah tidak memiliki kewenangan apa pun", "terdiri atas beberapa negara bagian yang memiliki kekuasaan tertentu", "hanya memiliki satu kepala negara tetapi tanpa pembagian wewenang", "tidak mengenal pembagian kewenangan pusat dan daerah"], a: 2 },
+        { q: "Yang bukan kedudukan NKRI adalah ....", o: ["bentuk negara Indonesia", "dasar penyatuan seluruh wilayah Indonesia", "wadah seluruh rakyat Indonesia", "dasar keutuhan bangsa Indonesia", "semboyan negara Indonesia"], a: 4 },
+        { q: "Otonomi daerah dalam NKRI berarti ....", o: ["daerah bebas lepas dari pemerintah pusat", "daerah diberi kewenangan mengatur urusannya sendiri dalam bingkai NKRI", "daerah menjadi negara baru", "daerah memiliki kedaulatan penuh", "daerah dapat membuat hubungan luar negeri sendiri"], a: 1 },
+        { q: "Dalam sistem negara Indonesia, kedaulatan berada di tangan ....", o: ["presiden", "DPR", "rakyat", "gubernur", "mahkamah"], a: 2 },
+        { q: "Sikap yang paling tepat untuk menjaga persatuan di sekolah adalah ....", o: ["bekerja sama dengan semua teman tanpa membeda-bedakan suku, agama, atau latar belakang", "memilih teman hanya yang satu daerah", "menghindari kelompok yang berbeda pendapat", "memaksakan kehendak dalam diskusi", "menolak kerja kelompok agar tidak bertengkar"], a: 0 },
+        { q: "Jika suatu daerah ingin memisahkan diri dari Indonesia, hal itu terutama mengancam ....", o: ["ketertiban lalu lintas", "sistem ekonomi pasar", "budaya lokal", "keutuhan wilayah negara", "pembagian tugas sekolah"], a: 3 },
+        { q: "Republik berarti pemerintahan yang ....", o: ["dipimpin raja secara turun-temurun", "dipimpin bangsawan", "berdasarkan kasta", "diwariskan secara keluarga", "berdasarkan kepentingan rakyat, bukan kerajaan"], a: 4 },
+        { q: "Prinsip NKRI yang paling tepat adalah ....", o: ["perbedaan harus dihapus agar seragam", "perbedaan boleh ada, tetapi negara tetap satu", "daerah berhak berdiri sendiri jika berbeda budaya", "kekuasaan harus dibagi sama rata ke negara bagian", "pemerintah pusat tidak boleh mengatur urusan penting"], a: 1 },
+        { q: "Salah satu tujuan negara Indonesia menurut Pembukaan UUD 1945 adalah ....", o: ["memperluas wilayah kekuasaan", "menjadikan Indonesia negara kerajaan", "mencerdaskan kehidupan bangsa", "mengutamakan kepentingan kelompok tertentu", "membentuk pemerintahan daerah yang merdeka"], a: 2 },
+        { q: "Pernyataan yang benar mengenai hubungan NKRI, Pancasila, UUD 1945, dan Bhinneka Tunggal Ika adalah ....", o: ["NKRI adalah bentuk negara, Pancasila dasar nilai, UUD 1945 dasar hukum, dan Bhinneka Tunggal Ika semboyan persatuan", "NKRI adalah dasar hukum, Pancasila adalah bentuk negara, UUD 1945 adalah semboyan, dan Bhinneka Tunggal Ika adalah aturan daerah", "NKRI adalah semboyan persatuan, Pancasila adalah konstitusi, UUD 1945 adalah dasar nilai, dan Bhinneka Tunggal Ika adalah bentuk negara", "NKRI adalah dasar negara, Pancasila adalah pemerintah pusat, UUD 1945 adalah budaya nasional, dan Bhinneka Tunggal Ika adalah wilayah negara", "NKRI adalah konstitusi, Pancasila adalah lambang negara, UUD 1945 adalah ideologi daerah, dan Bhinneka Tunggal Ika adalah sistem pemerintahan"], a: 0 },
+        { q: "Contoh penerapan menjaga keutuhan NKRI di masyarakat adalah ....", o: ["menyebarkan ujaran kebencian", "menolak kerja bakti", "memilih-milih tetangga berdasarkan suku", "menghormati perbedaan dan ikut gotong royong", "menolak aturan lingkungan"], a: 3 },
+        { q: "Yang termasuk ancaman dari dalam terhadap NKRI adalah ....", o: ["serangan militer asing", "tekanan politik luar negeri", "intervensi negara lain", "kejahatan lintas negara", "separatisme"], a: 4 },
+        { q: "Indonesia bukan negara ....", o: ["kesatuan", "federal", "republik", "berdaulat", "kepulauan"], a: 1 },
+        { q: "Ciri negara kesatuan adalah ....", o: ["ada banyak konstitusi", "ada banyak kepala negara", "ada satu pemerintah pusat yang memegang kekuasaan tertinggi", "setiap daerah memiliki kedaulatan penuh", "urusan penting negara diatur oleh negara bagian"], a: 2 },
+        { q: "Bentuk negara yang tepat untuk Indonesia adalah negara kesatuan karena ....", o: ["kekuasaan tertinggi berada pada pemerintah pusat dan daerah hanya diberi otonomi", "terdapat pembagian kedaulatan antara negara bagian", "tiap provinsi menjadi negara merdeka", "ada banyak konstitusi di setiap daerah", "pemerintah daerah lebih tinggi dari pemerintah pusat"], a: 0 },
+        { q: "Tujuan melindungi segenap bangsa dan seluruh tumpah darah Indonesia tercantum dalam ....", o: ["batang tubuh UUD 1945", "sila pertama Pancasila", "Pembukaan UUD 1945 alinea pertama", "Pembukaan UUD 1945 alinea keempat", "Bhinneka Tunggal Ika"], a: 3 },
+        { q: "Cara pandang bangsa Indonesia terhadap diri dan lingkungannya sebagai satu kesatuan disebut ....", o: ["nasionalisme sempit", "Wawasan Nusantara", "otonomi daerah", "federalisme", "desentralisasi mutlak"], a: 1 },
+        { q: "Bahasa yang penting digunakan sebagai bahasa persatuan adalah ....", o: ["bahasa daerah", "bahasa asing", "bahasa diplomasi", "bahasa ilmiah", "bahasa Indonesia"], a: 4 },
+        { q: "Ancaman seperti intoleransi dan radikalisme termasuk ancaman ....", o: ["dari dalam negeri", "dari luar negeri", "ekonomi internasional", "alamiah", "geografis"], a: 0 },
+        { q: "Pernyataan yang paling tepat tentang wilayah udara Indonesia adalah ....", o: ["udara bebas sepenuhnya tanpa kedaulatan negara", "udara hanya berlaku di atas laut teritorial", "udara di atas wilayah darat dan laut Indonesia berada dalam kedaulatan negara", "udara hanya dimiliki oleh pemerintah daerah", "udara tidak termasuk wilayah negara"], a: 2 },
+        { q: "Salah satu contoh sikap cinta tanah air adalah ....", o: ["membanggakan daerah sendiri dan merendahkan daerah lain", "menolak menggunakan bahasa Indonesia", "menyebarkan hoaks tentang bangsa sendiri", "menjaga nama baik bangsa dan negara", "mengabaikan aturan sekolah"], a: 3 },
+        { q: "Yang bukan cara menjaga keutuhan NKRI adalah ....", o: ["menghormati perbedaan", "menyebarkan provokasi", "taat hukum", "memperkuat toleransi", "memakai bahasa Indonesia sebagai bahasa persatuan"], a: 1 },
+        { q: "Indonesia terdiri atas ....", o: ["satu pulau besar", "satu negara bagian", "beberapa kerajaan", "beberapa koloni", "banyak pulau yang berada dalam satu negara"], a: 4 },
+        { q: "Bhinneka Tunggal Ika berfungsi sebagai ....", o: ["semboyan pemersatu bangsa", "dasar hukum pemerintahan", "bentuk negara", "aturan otonomi daerah", "sistem pemilihan umum"], a: 0 },
+        { q: "Urutan pernyataan yang paling tepat adalah ....", o: ["Pancasila = bentuk negara, UUD 1945 = semboyan, NKRI = dasar hukum, Bhinneka Tunggal Ika = dasar nilai", "Pancasila = dasar nilai, UUD 1945 = dasar hukum, Bhinneka Tunggal Ika = semboyan persatuan, NKRI = bentuk negara", "Pancasila = dasar hukum, UUD 1945 = bentuk negara, Bhinneka Tunggal Ika = dasar nilai, NKRI = semboyan", "Pancasila = konstitusi, UUD 1945 = ideologi, Bhinneka Tunggal Ika = wilayah negara, NKRI = pemerintah pusat", "Pancasila = lambang negara, UUD 1945 = budaya, Bhinneka Tunggal Ika = hukum adat, NKRI = negara bagian"], a: 1 },
+        { q: "Negara kesatuan memiliki ....", o: ["beberapa kepala negara", "beberapa konstitusi", "satu pemerintah pusat", "satu negara bagian yang berdaulat", "dua sistem kedaulatan"], a: 2 },
+        { q: "Contoh ancaman sosial yang dapat mengganggu NKRI adalah ....", o: ["gempa bumi", "banjir", "perubahan musim", "konflik antarkelompok", "longsor"], a: 3 },
+        { q: "Salah satu contoh penerapan menjaga persatuan di rumah adalah ....", o: ["saling menghormati anggota keluarga", "memaksakan kehendak sendiri", "membeda-bedakan saudara", "menolak membantu pekerjaan rumah", "membuat keributan"], a: 0 },
+        { q: "Pernyataan yang paling tepat tentang kedaulatan rakyat adalah ....", o: ["kekuasaan tertinggi berada pada pemerintah daerah", "kekuasaan tertinggi berada pada presiden", "rakyat tidak memiliki peran dalam pemerintahan", "kedaulatan hanya dimiliki DPR", "kekuasaan tertinggi ada pada rakyat melalui mekanisme konstitusi"], a: 4 },
+        { q: "NKRI bukan ....", o: ["bentuk negara Indonesia", "dasar negara Indonesia", "negara yang satu dan utuh", "negara berdaulat", "negara kesatuan"], a: 1 },
+        { q: "Hal yang paling tepat untuk melestarikan budaya daerah dan nasional adalah ....", o: ["menghapus budaya daerah", "menolak semua tradisi", "menghargai dan mempelajari budaya daerah tanpa merendahkan budaya lain", "hanya menggunakan budaya asing", "menganggap budaya sendiri paling unggul"], a: 2 },
+        { q: "Contoh urusan yang diatur pemerintah pusat adalah ....", o: ["jadwal piket kelas", "kegiatan ekstrakurikuler sekolah", "pembagian tugas kelompok", "pertahanan dan keamanan negara", "organisasi kelas"], a: 3 },
+        { q: "Indonesia disebut negara kepulauan, sehingga laut menjadi ....", o: ["unsur penting wilayah negara", "wilayah bebas tanpa aturan", "hak milik daerah tertentu", "wilayah yang tidak diakui", "batas yang memisahkan rakyat"], a: 0 },
+        { q: "Pasangan yang tepat antara bentuk negara dan cirinya adalah ....", o: ["Negara kesatuan = beberapa negara bagian berdaulat", "Negara federal = satu negara tanpa pembagian kewenangan", "Negara kesatuan = daerah memiliki kedaulatan penuh", "Negara federal = tidak ada pembagian kekuasaan pusat dan daerah", "Negara kesatuan = satu negara, pemerintah pusat kuat, daerah tidak berdaulat sendiri"], a: 4 },
+        { q: "Memilih wakil rakyat dalam pemilu menunjukkan adanya ....", o: ["monarki", "kedaulatan rakyat", "negara bagian", "intervensi asing", "feodalisme"], a: 1 },
+        { q: "Tujuan negara Indonesia selain melindungi rakyat adalah ....", o: ["memperluas penjajahan", "mengganti sistem republik", "memajukan kesejahteraan umum", "meniadakan kebebasan warga", "membatasi pendidikan"], a: 2 },
+        { q: "Tindakan yang bertentangan dengan persatuan bangsa adalah ....", o: ["gotong royong", "toleransi", "menghormati perbedaan", "menyebarkan ujaran kebencian", "menjaga ketertiban"], a: 3 },
+        { q: "NKRI harus dipahami sebagai satu kesatuan ....", o: ["wilayah, politik, ekonomi, sosial budaya, dan pertahanan keamanan", "wilayah darat saja", "pemerintahan pusat saja", "budaya daerah saja", "ekonomi daerah saja"], a: 0 },
+        { q: "Jika suatu soal menyatakan bahwa Indonesia terdiri atas banyak negara bagian yang masing-masing berdaulat sendiri, maka pernyataan tersebut ....", o: ["benar, karena Indonesia adalah negara federal", "benar, karena NKRI memberi kedaulatan penuh kepada daerah", "benar, karena otonomi daerah sama dengan negara bagian", "benar, karena negara kesatuan memiliki banyak konstitusi", "salah, karena Indonesia adalah negara kesatuan, bukan federal"], a: 4 },
+        { q: "Semboyan yang menjaga NKRI tetap utuh di tengah perbedaan adalah ....", o: ["Satu Nusa Satu Bangsa", "Bhinneka Tunggal Ika", "Tut Wuri Handayani", "Indonesia Raya", "Merdeka atau Mati"], a: 1 },
+        { q: "Otonomi daerah tidak menjadikan daerah sebagai negara sendiri karena ....", o: ["daerah tetap berada dalam bingkai NKRI", "daerah tidak memiliki pemerintahan", "daerah tidak boleh mengatur urusan apa pun", "daerah wajib memiliki tentara sendiri", "daerah bebas membuat konstitusi sendiri"], a: 0 },
+        { q: "Keutuhan wilayah negara berarti ....", o: ["hanya wilayah darat yang dijaga", "hanya ibu kota yang penting", "wilayah laut dapat dipisahkan bila perlu", "seluruh wilayah darat, laut, dan udara tetap menjadi satu kesatuan yang tidak boleh dipisahkan", "setiap daerah berhak menentukan batas negaranya sendiri"], a: 3 }
     ];
 
     let currentIdx = 0;
@@ -333,7 +334,7 @@
         const q = questions[idx];
         document.getElementById('q-label').innerText = `SOAL NOMOR ${idx + 1}`;
         document.getElementById('q-text').innerText = q.q;
-        document.getElementById('progress-header').innerText = `Soal ${idx + 1} dari ${questions.length}`;
+        document.getElementById('progress-header').innerText = `Progres: ${idx + 1} / ${questions.length}`;
 
         const container = document.getElementById('options-container');
         container.innerHTML = '';
@@ -342,12 +343,12 @@
             const div = document.createElement('div');
             div.className = `option-item ${userAnswers[idx] === i ? 'selected' : ''}`;
             div.onclick = () => selectOption(i);
-            div.innerHTML = `<span style="width:30px; font-weight:bold;">${label}.</span> <span>${q.o[i]}</span>`;
+            div.innerHTML = `<span style="width:30px; font-weight:bold; color:var(--primary);">${label}.</span> <span>${q.o[i]}</span>`;
             container.appendChild(div);
         });
 
-        document.getElementById('btn-next').style.display = (idx === questions.length -1) ? 'none' : 'block';
-        document.getElementById('btn-finish').style.display = (idx === questions.length -1) ? 'block' : 'none';
+        document.getElementById('btn-next').style.display = (idx === questions.length - 1) ? 'none' : 'block';
+        document.getElementById('btn-finish').style.display = (idx === questions.length - 1) ? 'block' : 'none';
         updateNavStyles();
     }
 
@@ -370,6 +371,7 @@
     function updateNavStyles() {
         questions.forEach((_, i) => {
             const el = document.getElementById(`nav-${i}`);
+            if(!el) return;
             el.className = 'nav-num';
             if(userAnswers[i] !== null) el.classList.add('answered');
             if(userDoubts[i]) el.classList.add('doubt');
@@ -391,8 +393,9 @@
     function finishExam() {
         clearInterval(timer);
         hideConfirm();
-        let score = 0;
-        userAnswers.forEach((ans, i) => { if(ans === questions[i].a) score += 5; });
+        let correct = 0;
+        userAnswers.forEach((ans, i) => { if(ans === questions[i].a) correct++; });
+        let score = correct * 5; // Maksimal 250
 
         document.getElementById('exam-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
@@ -400,30 +403,31 @@
         
         const status = document.getElementById('status-tag');
         if(score >= 65) {
-            status.innerText = "LULUS";
-            status.style.color = "#28a745";
+            status.innerText = "LULUS (MS)";
+            status.style.color = "var(--success)";
         } else {
-            status.innerText = "TIDAK LULUS";
-            status.style.color = "#dc3545";
+            status.innerText = "TIDAK LULUS (TMS)";
+            status.style.color = "var(--danger)";
         }
-        document.getElementById('stats-detail').innerText = `Skor Anda: ${score} / 250`;
+        document.getElementById('stats-detail').innerText = `Benar: ${correct} | Salah: ${questions.length - correct} | Skor: ${score} / 250`;
     }
 
     function showReview() {
         document.getElementById('result-screen').style.display = 'none';
         document.getElementById('review-screen').style.display = 'block';
         const container = document.getElementById('review-content');
+        container.innerHTML = '';
         const labels = ['A','B','C','D','E'];
 
         questions.forEach((q, i) => {
             const isCorrect = userAnswers[i] === q.a;
             const div = document.createElement('div');
             div.className = 'review-card';
-            div.style.borderColor = isCorrect ? '#28a745' : '#dc3545';
+            div.style.borderColor = isCorrect ? 'var(--success)' : 'var(--danger)';
             div.innerHTML = `
                 <p><strong>Soal ${i+1}:</strong> ${q.q}</p>
-                <p>Jawaban Anda: <span style="color:${isCorrect ? 'green' : 'red'}">${userAnswers[i] !== null ? labels[userAnswers[i]] : 'Kosong'}</span></p>
-                <p>Kunci Jawaban: <strong style="color:green">${labels[q.a]}</strong></p>
+                <p style="margin-top:10px;">Jawaban Anda: <span style="color:${isCorrect ? 'green' : 'red'}; font-weight:bold;">${userAnswers[i] !== null ? labels[userAnswers[i]] + '. ' + q.o[userAnswers[i]] : 'KOSONG'}</span></p>
+                <p>Kunci Jawaban: <strong style="color:green">${labels[q.a]}. ${q.o[q.a]}</strong></p>
             `;
             container.appendChild(div);
         });
