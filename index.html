@@ -3,448 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi CAT BKN - Tes Wawasan Kebangsaan</title>
+    <title>Sistem CAT BKN - Simulasi TWK</title>
     <style>
         :root {
-            --bkn-blue: #1a237e;
-            --bkn-gold: #ffd700;
+            --primary: #1a237e;
+            --accent: #ffd700;
             --success: #2e7d32;
             --warning: #fbc02d;
             --danger: #c62828;
-            --gray: #e0e0e0;
+            --light: #f5f5f5;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #eaeff2; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
         /* Header */
-        header {
-            background-color: var(--bkn-blue);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .timer {
-            background: white;
-            color: var(--danger);
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
+        header { background: var(--primary); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; }
+        .timer { background: white; color: var(--danger); padding: 8px 15px; border-radius: 5px; font-weight: bold; font-size: 1.2rem; min-width: 100px; text-align: center; }
 
         /* Container */
-        .container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            padding: 1rem;
-            gap: 1rem;
-        }
+        .wrapper { display: flex; flex: 1; overflow: hidden; padding: 15px; gap: 15px; }
 
-        /* Main Content */
-        .main-panel {
-            flex: 3;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+        /* Panel Utama */
+        .main-panel { flex: 3; background: white; border-radius: 8px; display: flex; flex-direction: column; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .q-header { padding: 15px; border-bottom: 2px solid #eee; font-weight: bold; color: var(--primary); font-size: 1.1rem; }
+        .q-content { padding: 30px; flex: 1; overflow-y: auto; }
+        .q-text { font-size: 1.2rem; margin-bottom: 25px; line-height: 1.6; }
 
-        .question-header {
-            padding: 1rem;
-            border-bottom: 2px solid var(--gray);
-            font-weight: bold;
-            color: var(--bkn-blue);
-        }
+        /* Opsi Jawaban */
+        .option { display: flex; align-items: center; padding: 12px 20px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .option:hover { background: #f8f9ff; border-color: var(--primary); }
+        .option.selected { background: #e8eaf6; border-color: var(--primary); border-width: 2px; font-weight: 600; }
+        .opt-char { width: 35px; font-weight: bold; color: var(--primary); }
 
-        .question-body {
-            padding: 2rem;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .option {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            margin: 0.5rem 0;
-            border: 1px solid var(--gray);
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .option:hover {
-            background-color: #f0f2ff;
-        }
-
-        .option.selected {
-            border-color: var(--bkn-blue);
-            background-color: #e8eaf6;
-            font-weight: bold;
-        }
-
-        .option-label {
-            width: 30px;
-            font-weight: bold;
-        }
-
-        /* Navigation Panel */
-        .nav-panel {
-            flex: 1;
-            background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
-            margin-bottom: 1rem;
-        }
-
-        .grid-item {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--gray);
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .grid-item.active { border: 2px solid var(--bkn-blue); }
-        .grid-item.answered { background: var(--success); color: white; }
-        .grid-item.doubt { background: var(--warning); color: black; }
+        /* Navigasi Kanan */
+        .nav-panel { flex: 1; background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 20px; overflow-y: auto; padding-right: 5px; }
+        .nav-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: #eee; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9rem; border: 2px solid transparent; }
+        .nav-item.active { border-color: var(--primary); background: #d1d9ff; }
+        .nav-item.answered { background: var(--success); color: white; }
+        .nav-item.doubt { background: var(--warning); color: black; }
 
         /* Footer Buttons */
-        .footer-btns {
-            padding: 1rem;
-            border-top: 1px solid var(--gray);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        button {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .btn-prev { background: #9e9e9e; color: white; }
-        .btn-next { background: var(--bkn-blue); color: white; }
+        .footer-btns { padding: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; background: #fafafa; }
+        button { padding: 10px 25px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.95rem; transition: 0.3s; }
+        .btn-prev { background: #78909c; color: white; }
+        .btn-next { background: var(--primary); color: white; }
         .btn-doubt { background: var(--warning); color: black; }
-        .btn-submit { background: var(--danger); color: white; width: 100%; margin-top: 10px; }
+        .btn-finish { background: var(--danger); color: white; width: 100%; margin-top: 15px; font-size: 1.1rem; padding: 15px; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Result & Review */
-        #result-page, #review-page {
-            display: none;
-            padding: 2rem;
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            border-radius: 8px;
-        }
+        /* Result Page */
+        #result-screen, #review-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 100; overflow-y: auto; padding: 40px 20px; }
+        .card { max-width: 800px; margin: auto; text-align: center; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .score-circle { width: 150px; height: 150px; border-radius: 50%; border: 8px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: bold; margin: 20px auto; color: var(--primary); }
+        .badge { display: inline-block; padding: 10px 30px; border-radius: 50px; font-weight: bold; font-size: 1.5rem; margin-bottom: 20px; }
+        .badge.lulus { background: #e8f5e9; color: var(--success); }
+        .badge.gagal { background: #ffebee; color: var(--danger); }
 
-        .review-item {
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px dashed #ccc;
-        }
-
-        .explanation-box {
-            background: #f1f8e9;
-            padding: 1rem;
-            border-left: 5px solid var(--success);
-            margin-top: 1rem;
-        }
-
-        .status-badge {
-            font-size: 2rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            display: inline-block;
-            border-radius: 10px;
-        }
-
-        .lulus { background: var(--success); color: white; }
-        .tidak-lulus { background: var(--danger); color: white; }
-
+        .review-item { text-align: left; margin-bottom: 25px; padding: 20px; border-left: 5px solid #ddd; background: #f9f9f9; }
+        .correct { color: var(--success); font-weight: bold; }
+        .wrong { color: var(--danger); text-decoration: line-through; }
     </style>
 </head>
 <body>
 
-    <header id="exam-header">
-        <div><strong>SIMULASI CAT TWK</strong></div>
-        <div class="timer" id="timer-display">30:00</div>
+    <header>
+        <div><strong>CAT BKN - SIMULASI TWK</strong></div>
+        <div class="timer" id="timer">30:00</div>
     </header>
 
-    <div class="container" id="exam-container">
+    <div class="wrapper" id="exam-ui">
         <div class="main-panel">
-            <div class="question-header" id="q-number-title">Soal No. 1</div>
-            <div class="question-body">
-                <p id="q-text" style="font-size: 1.1rem; margin-bottom: 1.5rem;"></p>
-                <div id="options-container"></div>
+            <div class="q-header" id="q-title">Soal No. 1</div>
+            <div class="q-content">
+                <div class="q-text" id="q-text">Loading soal...</div>
+                <div id="options"></div>
             </div>
             <div class="footer-btns">
-                <button class="btn-prev" onclick="changeQuestion(-1)">Sebelumnya</button>
-                <button class="btn-doubt" onclick="toggleDoubt()">Ragu-ragu</button>
-                <button class="btn-next" onclick="changeQuestion(1)">Selanjutnya</button>
+                <button class="btn-prev" onclick="nav(-1)">Sebelumnya</button>
+                <button class="btn-doubt" onclick="toggleDoubt()">Ragu-Ragu</button>
+                <button class="btn-next" onclick="nav(1)">Selanjutnya</button>
             </div>
         </div>
 
         <div class="nav-panel">
-            <div style="font-weight: bold; margin-bottom: 10px;">Navigasi Soal</div>
-            <div class="grid-container" id="nav-grid"></div>
-            <button class="btn-submit" onclick="confirmSubmit()">SELESAI UJIAN</button>
+            <div style="font-weight: bold; margin-bottom: 15px; color: #555;">Navigasi Soal</div>
+            <div class="nav-grid" id="nav-grid"></div>
+            <button class="btn-finish" onclick="finishExam()">SELESAI UJIAN</button>
         </div>
     </div>
 
-    <div id="result-page">
-        <h1 style="text-align: center;">Hasil Ujian TWK</h1>
-        <div style="text-align: center;">
-            <div id="score-display" style="font-size: 3rem; font-weight: bold;"></div>
-            <div id="status-badge" class="status-badge"></div>
-            <p>Passing Grade: 65</p>
-            <button class="btn-next" onclick="showReview()">Lihat Pembahasan</button>
+    <div id="result-screen">
+        <div class="card">
+            <h1 id="res-msg">Hasil Ujian Anda</h1>
+            <div id="res-badge" class="badge">LULUS</div>
+            <div class="score-circle" id="res-score">0</div>
+            <p style="font-size: 1.2rem; color: #666;">Nilai ambang batas (Passing Grade) adalah 65</p>
+            <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center;">
+                <button class="btn-next" onclick="showReview()">Lihat Pembahasan</button>
+                <button class="btn-prev" onclick="location.reload()">Ulangi Ujian</button>
+            </div>
         </div>
     </div>
 
-    <div id="review-page">
-        <h1 style="text-align: center;">Review & Pembahasan</h1>
-        <div id="review-list"></div>
-        <button class="btn-submit" onclick="location.reload()">Ulangi Simulasi</button>
+    <div id="review-screen">
+        <div style="max-width: 800px; margin: auto;">
+            <h1 style="text-align: center; color: var(--primary);">Review Jawaban</h1>
+            <div id="review-container"></div>
+            <button class="btn-finish" onclick="location.reload()">Kembali ke Beranda</button>
+        </div>
     </div>
 
-    <script>
-        // DATA SOAL
-        const questions = [
-            { question: "Sejarah kebangsaan Indonesia pada dasarnya membahas tentang ....", options: ["perkembangan ekonomi Indonesia setelah merdeka", "perjuangan bangsa Indonesia dari masa penjajahan hingga kemerdekaan", "kehidupan kerajaan-kerajaan Nusantara semata", "sistem pemerintahan modern Indonesia", "hubungan dagang Indonesia dengan negara asing"], answer: 1, explanation: "Sejarah kebangsaan fokus pada proses pembentukan bangsa dari masa kolonial hingga berdaulat." },
-            { question: "Berikut ini yang termasuk faktor internal lahirnya nasionalisme Indonesia adalah ....", options: ["kemenangan Jepang atas Rusia", "masuknya ide demokrasi dari Barat", "penderitaan akibat penjajahan", "pengaruh pergerakan nasional negara lain", "berkembangnya hubungan internasional"], answer: 2, explanation: "Penderitaan rakyat secara fisik dan mental merupakan pendorong utama dari dalam (internal)." },
-            { question: "Organisasi yang menandai Kebangkitan Nasional tahun 1908 adalah ....", options: ["Sarekat Islam", "Indische Partij", "Budi Utomo", "Muhammadiyah", "PNI"], answer: 2, explanation: "Budi Utomo (20 Mei 1908) dianggap sebagai organisasi modern pertama yang mengawali kebangkitan nasional." },
-            { question: "Pernyataan yang paling tepat mengenai makna Kebangkitan Nasional 1908 adalah ....", options: ["dimulainya perlawanan bersenjata di seluruh daerah", "munculnya kesadaran nasional dan perjuangan yang lebih terorganisir", "berakhirnya penjajahan Belanda di Indonesia", "terbentuknya negara Indonesia merdeka", "lahirnya UUD 1945"], answer: 1, explanation: "1908 menandai perubahan strategi dari kedaerahan/senjata menjadi diplomasi dan organisasi modern." },
-            { question: "Sumpah Pemuda berlangsung pada tanggal ....", options: ["20 Mei 1908", "28 Oktober 1928", "17 Agustus 1945", "18 Agustus 1945", "16 Agustus 1945"], answer: 1, explanation: "Sumpah Pemuda dibacakan pada Kongres Pemuda II tanggal 28 Oktober 1928." },
-            { question: "Isi Sumpah Pemuda yang tepat adalah ....", options: ["satu bangsa, satu negara, satu pemerintahan", "satu bahasa, satu adat, satu wilayah", "satu tanah air, satu bangsa, satu bahasa persatuan", "satu rakyat, satu undang-undang, satu presiden", "satu perjuangan, satu cita-cita, satu tujuan"], answer: 2, explanation: "Isi utamanya adalah Bertumpah Darah satu (Tanah Air), Berbangsa satu (Bangsa), dan Menjunjung Bahasa Persatuan (Bahasa)." },
-            { question: "Proklamasi Kemerdekaan Indonesia dibacakan pada tanggal ....", options: ["16 Agustus 1945", "17 Agustus 1945", "18 Agustus 1945", "20 Mei 1908", "28 Oktober 1928"], answer: 1, explanation: "Proklamasi dibacakan di Jl. Pegangsaan Timur No. 56 pada jam 10 pagi, 17 Agustus 1945." },
-            { question: "Tokoh yang membacakan Proklamasi Kemerdekaan Indonesia adalah ....", options: ["Soekarno dan Mohammad Hatta", "Ahmad Soebardjo dan Sayuti Melik", "Soepomo dan Muhammad Yamin", "Ki Hajar Dewantara dan H.O.S. Tjokroaminoto", "Sutan Sjahrir dan Wikana"], answer: 0, explanation: "Dibacakan oleh Soekarno didampingi Mohammad Hatta." },
-            { question: "BPUPKI memiliki kepanjangan ....", options: ["Badan Persiapan Perjuangan Kemerdekaan Indonesia", "Badan Penyelidik Usaha-usaha Persiapan Kemerdekaan Indonesia", "Badan Pembentukan Persatuan Kemerdekaan Indonesia", "Badan Persatuan Perjuangan Kemerdekaan Indonesia", "Badan Penyusun Undang-Undang Kemerdekaan Indonesia"], answer: 1, explanation: "Dikenal dalam bahasa Jepang sebagai Dokuritsu Junbi Cosakai." },
-            { question: "Tujuan utama dibentuknya BPUPKI adalah ....", options: ["mengesahkan UUD 1945", "mempersiapkan dasar negara dan merancang konstitusi", "memilih presiden pertama Indonesia", "menyusun kabinet pertama Indonesia", "mengumumkan kemerdekaan Indonesia"], answer: 1, explanation: "Tugas utamanya menyelidiki hal penting terkait ekonomi, politik dan tata pemerintahan untuk Indonesia merdeka." },
-            { question: "Sidang pertama BPUPKI membahas ....", options: ["wilayah negara dan bentuk negara", "dasar negara", "pembentukan KNIP", "kabinet pertama", "persetujuan proklamasi"], answer: 1, explanation: "Sidang I (29 Mei - 1 Juni 1945) fokus merumuskan dasar negara." },
-            { question: "Peran Soekarno dalam sidang BPUPKI yang paling tepat adalah ....", options: ["mengetik naskah proklamasi", "mengusulkan konsep dasar negara yang menjadi cikal bakal Pancasila", "mengesahkan UUD 1945", "membentuk KNIP", "memimpin peristiwa Rengasdengklok"], answer: 1, explanation: "Soekarno menyampaikan pidato Lahirnya Pancasila pada 1 Juni 1945." },
-            { question: "Sidang kedua BPUPKI dilaksanakan pada ....", options: ["29 Mei – 1 Juni 1945", "10 – 16 Juli 1945", "16 – 17 Agustus 1945", "17 – 18 Agustus 1945", "28 Oktober 1928"], answer: 1, explanation: "Sidang II membahas rancangan UUD dan wilayah negara." },
-            { question: "Salah satu hasil penting BPUPKI adalah ....", o: ["lahirnya gerakan Budi Utomo", "terbentuknya Panitia Sembilan", "disahkannya UUD 1945", "dipilihnya Presiden dan Wakil Presiden", "terbentuknya NKRI"], answer: 1, explanation: "Panitia Sembilan merumuskan Piagam Jakarta dalam masa jeda BPUPKI." },
-            { question: "PPKI dibentuk untuk ....", options: ["menyusun dasar negara dari awal", "mempersiapkan kemerdekaan secara konkret dan melanjutkan hasil BPUPKI", "menandatangani perjanjian dengan Jepang", "memimpin perlawanan bersenjata", "menggantikan fungsi Budi Utomo"], answer: 1, explanation: "PPKI bertugas melakukan pengesahan hukum dasar dan pemilihan pemimpin setelah kemerdekaan." },
-            { question: "Pada sidang 18 Agustus 1945, PPKI menetapkan ....", options: ["isi Sumpah Pemuda", "rancangan wilayah negara", "UUD 1945, Presiden, dan Wakil Presiden", "perlawanan terhadap Belanda", "pembentukan Budi Utomo"], answer: 2, explanation: "Hasil sidang PPKI ke-1: Mengesahkan UUD 1945, memilih Presiden & Wapres, dan membentuk KNIP." },
-            { question: "Perbedaan BPUPKI dan PPKI yang paling tepat adalah ....", options: ["BPUPKI mengesahkan, PPKI merancang", "BPUPKI merancang, PPKI mengesahkan dan menjalankan", "BPUPKI membacakan proklamasi, PPKI mengetik naskah", "BPUPKI memimpin perjuangan daerah, PPKI memimpin perang", "BPUPKI dan PPKI memiliki tugas yang sama persis"], answer: 1, explanation: "BPUPKI (Merancang/Menyelidiki), PPKI (Mengesahkan)." },
-            { question: "Jika suatu soal menyebut lembaga yang bertugas mengesahkan UUD 1945, maka jawaban yang tepat adalah ....", options: ["BPUPKI", "PPKI", "KNIP", "Panitia Sembilan", "Budi Utomo"], answer: 1, explanation: "Pengesahan dilakukan oleh PPKI pada 18 Agustus 1945." },
-            { question: "Peristiwa Rengasdengklok terjadi pada tanggal ....", options: ["20 Mei 1908", "28 Oktober 1928", "16 Agustus 1945", "17 Agustus 1945", "18 Agustus 1945"], answer: 2, explanation: "Terjadi satu hari sebelum proklamasi untuk menjauhkan Soekarno-Hatta dari pengaruh Jepang." },
-            { question: "Tujuan golongan muda membawa Soekarno dan Hatta ke Rengasdengklok adalah ....", options: ["agar keduanya berpidato di hadapan Jepang", "agar keduanya segera memproklamasikan kemerdekaan", "agar keduanya menyusun UUD 1945", "agar keduanya bertemu Budi Utomo", "agar keduanya memimpin perang dunia"], answer: 1, explanation: "Mendesak golongan tua untuk segera melakukan proklamasi tanpa campur tangan Jepang." },
-            { question: "Teks proklamasi disusun di rumah ....", options: ["Laksamana Tadashi Maeda", "Ahmad Soebardjo", "Soepomo", "Sayuti Melik", "Muhammad Yamin"], answer: 0, explanation: "Disusun di ruang makan Laksamana Maeda, Jl. Imam Bonjol No. 1." },
-            { question: "Tokoh yang mengetik teks proklamasi adalah ....", options: ["Soekarno", "Mohammad Hatta", "Sayuti Melik", "Ahmad Soebardjo", "Soepomo"], answer: 2, explanation: "Sayuti Melik mengetik naskah proklamasi dengan beberapa perubahan dari naskah tulis tangan." },
-            { question: "Tokoh yang dikenal sebagai perumus teks proklamasi adalah ....", options: ["Soekarno, Hatta, dan Ahmad Soebardjo", "Soekarno, Yamin, dan Soepomo", "Hatta, Sayuti Melik, dan Maeda", "Soepomo, Maeda, dan Yamin", "Budi Utomo, Soekarno, dan Hatta"], answer: 0, explanation: "Ketiga tokoh ini merumuskan teks proklamasi di rumah Maeda." },
-            { question: "Urutan yang benar dalam proses lahirnya proklamasi adalah ....", options: ["penyusunan teks proklamasi -> Rengasdengklok -> pembacaan proklamasi", "Rengasdengklok -> penyusunan teks proklamasi -> pembacaan proklamasi", "pembacaan proklamasi -> penyusunan teks proklamasi -> Rengasdengklok", "penyusunan teks proklamasi -> pembacaan proklamasi -> Rengasdengklok", "Rengasdengklok -> pembacaan proklamasi -> penyusunan teks proklamasi"], answer: 1, explanation: "Keamanan (Rengasdengklok) -> Perumusan (Maeda) -> Pelaksanaan (Pegangsaan Timur)." },
-            { question: "Soekarno dikenal sebagai ....", options: ["Ketua KNIP", "Proklamator dan Presiden pertama", "Ketua BPUPKI", "Pengetik teks proklamasi", "Pencetus semboyan Bhinneka Tunggal Ika"], answer: 1, explanation: "Bapak Proklamator dan pemimpin pertama Indonesia." },
-            { question: "Mohammad Hatta merupakan ....", options: ["Wakil Presiden pertama dan tokoh proklamator", "tokoh pengetik teks proklamasi", "pencetus Sumpah Pemuda", "pemimpin Budi Utomo", "penggagas peristiwa Rengasdengklok"], answer: 0, explanation: "Mendampingi Soekarno dalam memproklamasikan kemerdekaan." },
-            { question: "Muhammad Yamin dikenal sebagai ....", options: ["tokoh perumus dasar negara", "pengetik teks proklamasi", "wakil presiden pertama", "pembaca proklamasi", "ketua KNIP pertama"], answer: 0, explanation: "Salah satu pengusul dasar negara dan sastrawan pelopor Sumpah Pemuda." },
-            { question: "Soepomo berperan dalam sejarah kebangsaan Indonesia sebagai ....", options: ["penggagas konsep negara integralistik", "pembaca teks proklamasi", "pengetik naskah proklamasi", "pendiri Budi Utomo", "pemimpin golongan muda di Rengasdengklok"], answer: 0, explanation: "Mengusulkan teori integralistik dalam sidang BPUPKI." },
-            { question: "Mpu Tantular dikenal sebagai tokoh yang mencetuskan semboyan ....", options: ["Merdeka atau Mati", "Satu Nusa, Satu Bangsa", "Bhinneka Tunggal Ika", "Tut Wuri Handayani", "Pancasila Jaya"], answer: 2, explanation: "Berasal dari Kitab Sutasoma karya Mpu Tantular." },
-            { question: "Makna utama perjuangan kemerdekaan bagi bangsa Indonesia adalah ....", options: ["hanya untuk mengenang peristiwa sejarah", "membuktikan kemampuan bangsa dalam mempertahankan identitas dan persatuan", "menunjukkan kemenangan Jepang atas Rusia", "mengganti seluruh adat daerah", "menghapus semua perbedaan antardaerah"], answer: 1, explanation: "Kemerdekaan adalah alat untuk mencapai persatuan dan kesejahteraan bersama." },
-            { question: "Tahun 1908 sering disebut sebagai tahun ....", options: ["Proklamasi", "Kebangkitan Nasional", "Persiapan Kemerdekaan", "Pengesahan UUD", "Persatuan Bangsa"], answer: 1, explanation: "Sesuai berdirinya Budi Utomo." },
-            { question: "Tahun 1928 dalam sejarah kebangsaan Indonesia berkaitan erat dengan ....", options: ["berdirinya Budi Utomo", "Sumpah Pemuda", "disahkannya UUD 1945", "pembacaan proklamasi", "pembentukan KNIP"], answer: 1, explanation: "Ikrar persatuan pemuda seluruh Nusantara." },
-            { question: "Tahun 1945 memiliki arti penting karena ....", options: ["Indonesia mulai dijajah", "Indonesia merdeka dan UUD 1945 disahkan", "Budi Utomo berdiri", "Sumpah Pemuda diikrarkan", "perang dunia pertama berakhir"], answer: 1, explanation: "Tahun puncak perjuangan dengan proklamasi." },
-            { question: "Pasangan yang benar antara tanggal dan peristiwa adalah ....", options: ["16 Agustus 1945 = Sumpah Pemuda", "17 Agustus 1945 = Proklamasi Kemerdekaan", "18 Agustus 1945 = Kebangkitan Nasional", "20 Mei 1908 = Proklamasi Kemerdekaan", "28 Oktober 1928 = Pengesahan UUD 1945"], answer: 1, explanation: "Hanya B yang tepat tanggal dan peristiwanya." },
-            { question: "Salah satu faktor eksternal yang mendorong lahirnya nasionalisme Indonesia adalah ....", options: ["penderitaan rakyat akibat pajak", "berkembangnya pendidikan", "kemenangan Jepang atas Rusia", "munculnya kesadaran satu bangsa", "adanya penjajahan Belanda"], answer: 2, explanation: "Kemenangan Jepang atas Rusia (1905) membuktikan bangsa Asia bisa mengalahkan bangsa Eropa." },
-            { question: "Pernyataan “Kita harus bersatu untuk merdeka” paling sesuai dengan semangat ....", options: ["feodalisme", "nasionalisme", "kolonialisme", "imperialisme", "netralitas"], answer: 1, explanation: "Nasionalisme adalah paham kesetiaan tertinggi kepada bangsa." },
-            { question: "Organisasi yang menjadi tonggak awal perjuangan terorganisir adalah ....", options: ["PPKI", "Budi Utomo", "KNIP", "Panitia Sembilan", "BPUPKI"], answer: 1, explanation: "Memulai babak baru perjuangan melalui organisasi modern." },
-            { question: "Golongan muda pada masa menjelang proklamasi memiliki sikap ....", options: ["menunggu keputusan Jepang", "ingin segera memproklamasikan kemerdekaan", "menolak kemerdekaan Indonesia", "menyerahkan nasib bangsa kepada Belanda", "menganggap kemerdekaan belum perlu"], answer: 1, explanation: "Golongan muda menginginkan kemerdekaan murni hasil bangsa sendiri (anti-Jepang)." },
-            { question: "Dalam konteks sejarah kebangsaan, urutan yang paling tepat dari fase perkembangan nasionalisme adalah ....", options: ["merdeka -> bersatu -> bangkit", "bangkit -> bersatu -> merdeka", "bersatu -> bangkit -> merdeka", "merdeka -> bangkit -> bersatu", "bangkit -> merdeka -> bersatu"], answer: 1, explanation: "1908 (Bangkit) -> 1928 (Bersatu) -> 1945 (Merdeka)." },
-            { question: "Salah satu makna Proklamasi Kemerdekaan Indonesia adalah ....", options: ["awal berdirinya NKRI", "akhir seluruh perjuangan bangsa", "dimulainya penjajahan Jepang", "lahirnya Budi Utomo", "terbentuknya organisasi pemuda"], answer: 0, explanation: "Proklamasi adalah pintu gerbang menuju pembangunan NKRI." },
-            { question: "KNIP dibentuk oleh ....", options: ["BPUPKI", "PPKI", "Budi Utomo", "Panitia Sembilan", "Sarekat Islam"], answer: 1, explanation: "Dibentuk oleh PPKI pada 18 Agustus 1945 untuk membantu presiden." },
-            { question: "Pernyataan yang paling tepat untuk membedakan peran Soekarno dan Sayuti Melik adalah ....", options: ["Soekarno mengetik teks proklamasi, Sayuti Melik membacakannya", "Soekarno membacakan proklamasi, Sayuti Melik mengetik teks proklamasi", "Soekarno menyusun UUD 1945, Sayuti Melik mengesahkannya", "Soekarno memimpin BPUPKI, Sayuti Melik memimpin PPKI", "Soekarno mengamankan di Rengasdengklok, Sayuti Melik memimpin golongan muda"], answer: 1, explanation: "Soekarno (Proklamator), Sayuti Melik (Pengetik)." },
-            { question: "Yang termasuk tokoh proklamator Indonesia adalah ....", options: ["Soekarno dan Mohammad Hatta", "Soepomo dan Muhammad Yamin", "Ahmad Soebardjo dan Sayuti Melik", "Maeda dan Soepomo", "Mpu Tantular dan Soekarno"], answer: 0, explanation: "Sesuai penetapan resmi pemerintah." },
-            { question: "Berikut ini yang bukan hasil langsung sidang 18 Agustus 1945 adalah ....", options: ["pengesahan UUD 1945", "penetapan Presiden dan Wakil Presiden", "pembentukan KNIP", "pembentukan Budi Utomo", "penataan pemerintahan awal"], answer: 3, explanation: "Budi Utomo berdiri jauh sebelum 1945 (yaitu 1908)." },
-            { question: "Fungsi utama BPUPKI adalah ....", options: ["menjalankan pemerintahan Indonesia merdeka", "menyusun dasar negara dan rancangan UUD", "mengumumkan kemerdekaan Indonesia", "memilih anggota KNIP", "menulis teks Sumpah Pemuda"], answer: 1, explanation: "Fungsi riset dan perumusan dokumen fundamental negara." },
-            { question: "Berikut ini pasangan yang tepat adalah ....", options: ["Soekarno - mengetik teks proklamasi", "Sayuti Melik - merumuskan konsep negara integralistik", "Ahmad Soebardjo - perumus teks proklamasi", "Muhammad Yamin - pembaca proklamasi", "Hatta - pencetus semboyan Bhinneka Tunggal Ika"], answer: 2, explanation: "Ahmad Soebardjo ikut serta merumuskan kalimat proklamasi bersama Soekarno-Hatta." },
-            { question: "Soal menyebut “lembaga yang bertugas melanjutkan hasil BPUPKI dan menjalankan langkah konkret menuju kemerdekaan.” Lembaga yang dimaksud adalah ....", options: ["BPUPKI", "PPKI", "Panitia Sembilan", "KNIP", "Budi Utomo"], answer: 1, explanation: "Sesuai dengan sejarah pendirian PPKI pasca pembubaran BPUPKI." },
-            { question: "Tanggal 18 Agustus 1945 penting karena ....", options: ["Sumpah Pemuda diikrarkan", "UUD 1945 disahkan", "Budi Utomo berdiri", "Jepang menyerah kepada Belanda", "Rengasdengklok terjadi"], answer: 1, explanation: "Hari lahirnya konstitusi dan penetapan presiden pertama." },
-            { question: "Salah satu kesalahan umum dalam memahami sejarah kebangsaan adalah ....", options: ["mengira Proklamasi pada 17 Agustus 1945", "mengira Sumpah Pemuda terjadi pada 28 Oktober 1928", "mengira BPUPKI bertugas merancang dasar negara", "mengira BPUPKI dan PPKI memiliki peran berbeda", "mengira Proklamasi adalah hasil pemberian Jepang"], answer: 4, explanation: "Proklamasi adalah murni perjuangan bangsa Indonesia, bukan hadiah Jepang." },
-            { question: "Urutan timeline yang paling tepat berdasarkan materi adalah ....", options: ["1928 -> 1908 -> 1945", "1908 -> 1928 -> 1945", "1945 -> 1928 -> 1908", "1908 -> 1945 -> 1928", "1945 -> 1908 -> 1928"], answer: 1, explanation: "Budi Utomo -> Sumpah Pemuda -> Proklamasi." }
-        ];
+<script>
+    // DATA SOAL
+    const questions = [
+        { q: "Sejarah kebangsaan Indonesia pada dasarnya membahas tentang ....", o: ["perkembangan ekonomi Indonesia setelah merdeka", "perjuangan bangsa Indonesia dari masa penjajahan hingga kemerdekaan", "kehidupan kerajaan-kerajaan Nusantara semata", "sistem pemerintahan modern Indonesia", "hubungan dagang Indonesia dengan negara asing"], a: 1 },
+        { q: "Berikut ini yang termasuk faktor internal lahirnya nasionalisme Indonesia adalah ....", o: ["kemenangan Jepang atas Rusia", "masuknya ide demokrasi dari Barat", "penderitaan akibat penjajahan", "pengaruh pergerakan nasional negara lain", "berkembangnya hubungan internasional"], a: 2 },
+        { q: "Organisasi yang menandai Kebangkitan Nasional tahun 1908 adalah ....", o: ["Sarekat Islam", "Indische Partij", "Budi Utomo", "Muhammadiyah", "PNI"], a: 2 },
+        { q: "Pernyataan yang paling tepat mengenai makna Kebangkitan Nasional 1908 adalah ....", o: ["dimulainya perlawanan bersenjata di seluruh daerah", "munculnya kesadaran nasional dan perjuangan yang lebih terorganisir", "berakhirnya penjajahan Belanda di Indonesia", "terbentuknya negara Indonesia merdeka", "lahirnya UUD 1945"], a: 1 },
+        { q: "Sumpah Pemuda berlangsung pada tanggal ....", o: ["20 Mei 1908", "28 Oktober 1928", "17 Agustus 1945", "18 Agustus 1945", "16 Agustus 1945"], a: 1 },
+        { q: "Isi Sumpah Pemuda yang tepat adalah ....", o: ["satu bangsa, satu negara, satu pemerintahan", "satu bahasa, satu adat, satu wilayah", "satu tanah air, satu bangsa, satu bahasa persatuan", "satu rakyat, satu undang-undang, satu presiden", "satu perjuangan, satu cita-cita, satu tujuan"], a: 2 },
+        { q: "Proklamasi Kemerdekaan Indonesia dibacakan pada tanggal ....", o: ["16 Agustus 1945", "17 Agustus 1945", "18 Agustus 1945", "20 Mei 1908", "28 Oktober 1928"], a: 1 },
+        { q: "Tokoh yang membacakan Proklamasi Kemerdekaan Indonesia adalah ....", o: ["Soekarno dan Mohammad Hatta", "Ahmad Soebardjo dan Sayuti Melik", "Soepomo dan Muhammad Yamin", "Ki Hajar Dewantara dan H.O.S. Tjokroaminoto", "Sutan Sjahrir dan Wikana"], a: 0 },
+        { q: "BPUPKI memiliki kepanjangan ....", o: ["Badan Persiapan Perjuangan Kemerdekaan Indonesia", "Badan Penyelidik Usaha-usaha Persiapan Kemerdekaan Indonesia", "Badan Pembentukan Persatuan Kemerdekaan Indonesia", "Badan Persatuan Perjuangan Kemerdekaan Indonesia", "Badan Penyusun Undang-Undang Kemerdekaan Indonesia"], a: 1 },
+        { q: "Tujuan utama dibentuknya BPUPKI adalah ....", o: ["mengesahkan UUD 1945", "mempersiapkan dasar negara dan merancang konstitusi", "memilih presiden pertama Indonesia", "menyusun kabinet pertama Indonesia", "mengumumkan kemerdekaan Indonesia"], a: 1 },
+        { q: "Sidang pertama BPUPKI membahas ....", o: ["wilayah negara dan bentuk negara", "dasar negara", "pembentukan KNIP", "kabinet pertama", "persetujuan proklamasi"], a: 1 },
+        { q: "Peran Soekarno dalam sidang BPUPKI yang paling tepat adalah ....", o: ["mengetik naskah proklamasi", "mengusulkan konsep dasar negara yang menjadi cikal bakal Pancasila", "mengesahkan UUD 1945", "membentuk KNIP", "memimpin peristiwa Rengasdengklok"], a: 1 },
+        { q: "Sidang kedua BPUPKI dilaksanakan pada ....", o: ["29 Mei – 1 Juni 1945", "10 – 16 Juli 1945", "16 – 17 Agustus 1945", "17 – 18 Agustus 1945", "28 Oktober 1928"], a: 1 },
+        { q: "Salah satu hasil penting BPUPKI adalah ....", o: ["lahirnya gerakan Budi Utomo", "terbentuknya Panitia Sembilan", "disahkannya UUD 1945", "dipilihnya Presiden dan Wakil Presiden", "terbentuknya NKRI"], a: 1 },
+        { q: "PPKI dibentuk untuk ....", o: ["menyusun dasar negara dari awal", "mempersiapkan kemerdekaan secara konkret dan melanjutkan hasil BPUPKI", "menandatangani perjanjian dengan Jepang", "memimpin perlawanan bersenjata", "menggantikan fungsi Budi Utomo"], a: 1 },
+        { q: "Pada sidang 18 Agustus 1945, PPKI menetapkan ....", o: ["isi Sumpah Pemuda", "rancangan wilayah negara", "UUD 1945, Presiden, dan Wakil Presiden", "perlawanan terhadap Belanda", "pembentukan Budi Utomo"], a: 2 },
+        { q: "Perbedaan BPUPKI dan PPKI yang paling tepat adalah ....", o: ["BPUPKI mengesahkan, PPKI merancang", "BPUPKI merancang, PPKI mengesahkan dan menjalankan", "BPUPKI membacakan proklamasi, PPKI mengetik naskah", "BPUPKI memimpin perjuangan daerah, PPKI memimpin perang", "BPUPKI dan PPKI memiliki tugas yang sama persis"], a: 1 },
+        { q: "Jika suatu soal menyebut lembaga yang bertugas mengesahkan UUD 1945, maka jawaban yang tepat adalah ....", o: ["BPUPKI", "PPKI", "KNIP", "Panitia Sembilan", "Budi Utomo"], a: 1 },
+        { q: "Peristiwa Rengasdengklok terjadi pada tanggal ....", o: ["20 Mei 1908", "28 Oktober 1928", "16 Agustus 1945", "17 Agustus 1945", "18 Agustus 1945"], a: 2 },
+        { q: "Tujuan golongan muda membawa Soekarno dan Hatta ke Rengasdengklok adalah ....", o: ["agar keduanya berpidato di hadapan Jepang", "agar keduanya segera memproklamasikan kemerdekaan", "agar keduanya menyusun UUD 1945", "agar keduanya bertemu Budi Utomo", "agar keduanya memimpin perang dunia"], a: 1 },
+        { q: "Teks proklamasi disusun di rumah ....", o: ["Laksamana Tadashi Maeda", "Ahmad Soebardjo", "Soepomo", "Sayuti Melik", "Muhammad Yamin"], a: 0 },
+        { q: "Tokoh yang mengetik teks proklamasi adalah ....", o: ["Soekarno", "Mohammad Hatta", "Sayuti Melik", "Ahmad Soebardjo", "Soepomo"], a: 2 },
+        { q: "Tokoh yang dikenal sebagai perumus teks proklamasi adalah ....", o: ["Soekarno, Hatta, dan Ahmad Soebardjo", "Soekarno, Yamin, dan Soepomo", "Hatta, Sayuti Melik, dan Maeda", "Soepomo, Maeda, dan Yamin", "Budi Utomo, Soekarno, dan Hatta"], a: 0 },
+        { q: "Urutan yang benar dalam proses lahirnya proklamasi adalah ....", o: ["penyusunan teks proklamasi → Rengasdengklok → pembacaan proklamasi", "Rengasdengklok → penyusunan teks proklamasi → pembacaan proklamasi", "pembacaan proklamasi → penyusunan teks proklamasi → Rengasdengklok", "penyusunan teks proklamasi → pembacaan proklamasi → Rengasdengklok", "Rengasdengklok → pembacaan proklamasi → penyusunan teks proklamasi"], a: 1 },
+        { q: "Soekarno dikenal sebagai ....", o: ["Ketua KNIP", "Proklamator dan Presiden pertama", "Ketua BPUPKI", "Pengetik teks proklamasi", "Pencetus semboyan Bhinneka Tunggal Ika"], a: 1 },
+        { q: "Mohammad Hatta merupakan ....", o: ["Wakil Presiden pertama dan tokoh proklamator", "tokoh pengetik teks proklamasi", "pencetus Sumpah Pemuda", "pemimpin Budi Utomo", "penggagas peristiwa Rengasdengklok"], a: 0 },
+        { q: "Muhammad Yamin dikenal sebagai ....", o: ["tokoh perumus dasar negara", "pengetik teks proklamasi", "wakil presiden pertama", "pembaca proklamasi", "ketua KNIP pertama"], a: 0 },
+        { q: "Soepomo berperan dalam sejarah kebangsaan Indonesia sebagai ....", o: ["penggagas konsep negara integralistik", "pembaca teks proklamasi", "pengetik naskah proklamasi", "pendiri Budi Utomo", "pemimpin golongan muda di Rengasdengklok"], a: 0 },
+        { q: "Mpu Tantular dikenal sebagai tokoh yang mencetuskan semboyan ....", o: ["Merdeka atau Mati", "Satu Nusa, Satu Bangsa", "Bhinneka Tunggal Ika", "Tut Wuri Handayani", "Pancasila Jaya"], a: 2 },
+        { q: "Makna utama perjuangan kemerdekaan bagi bangsa Indonesia adalah ....", o: ["hanya untuk mengenang peristiwa sejarah", "membuktikan kemampuan bangsa dalam mempertahankan identitas dan persatuan", "menunjukkan kemenangan Jepang atas Rusia", "mengganti seluruh adat daerah", "menghapus semua perbedaan antardaerah"], a: 1 },
+        { q: "Tahun 1908 sering disebut sebagai tahun ....", o: ["Proklamasi", "Kebangkitan Nasional", "Persiapan Kemerdekaan", "Pengesahan UUD", "Persatuan Bangsa"], a: 1 },
+        { q: "Tahun 1928 dalam sejarah kebangsaan Indonesia berkaitan erat dengan ....", o: ["berdirinya Budi Utomo", "Sumpah Pemuda", "disahkannya UUD 1945", "pembacaan proklamasi", "pembentukan KNIP"], a: 1 },
+        { q: "Tahun 1945 memiliki arti penting karena ....", o: ["Indonesia mulai dijajah", "Indonesia merdeka dan UUD 1945 disahkan", "Budi Utomo berdiri", "Sumpah Pemuda diikrarkan", "perang dunia pertama berakhir"], a: 1 },
+        { q: "Pasangan yang benar antara tanggal dan peristiwa adalah ....", o: ["16 Agustus 1945 = Sumpah Pemuda", "17 Agustus 1945 = Proklamasi Kemerdekaan", "18 Agustus 1945 = Kebangkitan Nasional", "20 Mei 1908 = Proklamasi Kemerdekaan", "28 Oktober 1928 = Pengesahan UUD 1945"], a: 1 },
+        { q: "Salah satu faktor eksternal yang mendorong lahirnya nasionalisme Indonesia adalah ....", o: ["penderitaan rakyat akibat pajak", "berkembangnya pendidikan", "kemenangan Jepang atas Rusia", "munculnya kesadaran satu bangsa", "adanya penjajahan Belanda"], a: 2 },
+        { q: "Pernyataan “Kita harus bersatu untuk merdeka” paling sesuai dengan semangat ....", o: ["feodalisme", "nasionalisme", "kolonialisme", "imperialisme", "netralitas"], a: 1 },
+        { q: "Organisasi yang menjadi tonggak awal perjuangan terorganisir adalah ....", o: ["PPKI", "Budi Utomo", "KNIP", "Panitia Sembilan", "BPUPKI"], a: 1 },
+        { q: "Golongan muda pada masa menjelang proklamasi memiliki sikap ....", o: ["menunggu keputusan Jepang", "ingin segera memproklamasikan kemerdekaan", "menolak kemerdekaan Indonesia", "menyerahkan nasib bangsa kepada Belanda", "menganggap kemerdekaan belum perlu"], a: 1 },
+        { q: "Dalam konteks sejarah kebangsaan, urutan yang paling tepat dari fase perkembangan nasionalisme adalah ....", o: ["merdeka → bersatu → bangkit", "bangkit → bersatu → merdeka", "bersatu → bangkit → merdeka", "merdeka → bangkit → bersatu", "bangkit → merdeka → bersatu"], a: 1 },
+        { q: "Salah satu makna Proklamasi Kemerdekaan Indonesia adalah ....", o: ["awal berdirinya NKRI", "akhir seluruh perjuangan bangsa", "dimulainya penjajahan Jepang", "lahirnya Budi Utomo", "terbentuknya organisasi pemuda"], a: 0 },
+        { q: "KNIP dibentuk oleh ....", o: ["BPUPKI", "PPKI", "Budi Utomo", "Panitia Sembilan", "Sarekat Islam"], a: 1 },
+        { q: "Pernyataan yang paling tepat untuk membedakan peran Soekarno dan Sayuti Melik adalah ....", o: ["Soekarno mengetik teks proklamasi, Sayuti Melik membacakannya", "Soekarno membacakan proklamasi, Sayuti Melik mengetik teks proklamasi", "Soekarno menyusun UUD 1945, Sayuti Melik mengesahkannya", "Soekarno memimpin BPUPKI, Sayuti Melik memimpin PPKI", "Soekarno mengamankan di Rengasdengklok, Sayuti Melik memimpin golongan muda"], a: 1 },
+        { q: "Yang termasuk tokoh proklamator Indonesia adalah ....", o: ["Soekarno dan Mohammad Hatta", "Soepomo dan Muhammad Yamin", "Ahmad Soebardjo dan Sayuti Melik", "Maeda dan Soepomo", "Mpu Tantular dan Soekarno"], a: 0 },
+        { q: "Berikut ini yang bukan hasil langsung sidang 18 Agustus 1945 adalah ....", o: ["pengesahan UUD 1945", "penetapan Presiden dan Wakil Presiden", "pembentukan KNIP", "pembentukan Budi Utomo", "penataan pemerintahan awal"], a: 3 },
+        { q: "Fungsi utama BPUPKI adalah ....", o: ["menjalankan pemerintahan Indonesia merdeka", "menyusun dasar negara dan rancangan UUD", "mengumumkan kemerdekaan Indonesia", "memilih anggota KNIP", "menulis teks Sumpah Pemuda"], a: 1 },
+        { q: "Berikut ini pasangan yang tepat adalah ....", o: ["Soekarno — mengetik teks proklamasi", "Sayuti Melik — merumuskan konsep negara integralistik", "Ahmad Soebardjo — perumus teks proklamasi", "Muhammad Yamin — pembaca proklamasi", "Hatta — pencetus semboyan Bhinneka Tunggal Ika"], a: 2 },
+        { q: "Soal menyebut “lembaga yang bertugas melanjutkan hasil BPUPKI dan menjalankan langkah konkret menuju kemerdekaan.” Lembaga yang dimaksud adalah ....", o: ["BPUPKI", "PPKI", "Panitia Sembilan", "KNIP", "Budi Utomo"], a: 1 },
+        { q: "Tanggal 18 Agustus 1945 penting karena ....", o: ["Sumpah Pemuda diikrarkan", "UUD 1945 disahkan", "Budi Utomo berdiri", "Jepang menyerah kepada Belanda", "Rengasdengklok terjadi"], a: 1 },
+        { q: "Salah satu kesalahan umum dalam memahami sejarah kebangsaan adalah ....", o: ["mengira Proklamasi pada 17 Agustus 1945", "mengira Sumpah Pemuda terjadi pada 28 Oktober 1928", "mengira BPUPKI bertugas merancang dasar negara", "mengira BPUPKI dan PPKI memiliki peran berbeda", "mengira Proklamasi adalah hasil pemberian Jepang"], a: 4 },
+        { q: "Urutan timeline yang paling tepat berdasarkan materi adalah ....", o: ["1928 → 1908 → 1945", "1908 → 1928 → 1945", "1945 → 1928 → 1908", "1908 → 1945 → 1928", "1945 → 1908 → 1928"], a: 1 }
+    ];
 
-        let currentQuestion = 0;
-        let userAnswers = new Array(questions.length).fill(null);
-        let doubts = new Array(questions.length).fill(false);
-        let timeLeft = 30 * 60; // 30 Menit
-        let timerInterval;
+    let current = 0;
+    let userAns = new Array(questions.length).fill(null);
+    let doubtStatus = new Array(questions.length).fill(false);
+    let time = 30 * 60;
+    let timerId;
 
-        // Inisialisasi
-        function init() {
-            renderNavGrid();
-            showQuestion(0);
-            startTimer();
+    // Initialize
+    function init() {
+        renderNav();
+        loadSoal();
+        startTimer();
+    }
+
+    function renderNav() {
+        const grid = document.getElementById('nav-grid');
+        grid.innerHTML = '';
+        questions.forEach((_, i) => {
+            const btn = document.createElement('div');
+            btn.className = 'nav-item';
+            btn.id = `nav-${i}`;
+            btn.innerText = i + 1;
+            btn.onclick = () => jump(i);
+            grid.appendChild(btn);
+        });
+    }
+
+    function loadSoal() {
+        const data = questions[current];
+        document.getElementById('q-title').innerText = `Soal No. ${current + 1}`;
+        document.getElementById('q-text').innerText = data.q;
+        
+        const optBox = document.getElementById('options');
+        optBox.innerHTML = '';
+        
+        data.o.forEach((text, i) => {
+            const div = document.createElement('div');
+            div.className = `option ${userAns[current] === i ? 'selected' : ''}`;
+            div.onclick = () => select(i);
+            div.innerHTML = `<span class="opt-char">${String.fromCharCode(65 + i)}.</span> <span>${text}</span>`;
+            optBox.appendChild(div);
+        });
+
+        // Update Nav Grid
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        const currentNav = document.getElementById(`nav-${current}`);
+        currentNav.classList.add('active');
+        
+        updateNavStatus();
+    }
+
+    function select(idx) {
+        userAns[current] = idx;
+        loadSoal();
+    }
+
+    function toggleDoubt() {
+        doubtStatus[current] = !doubtStatus[current];
+        loadSoal();
+    }
+
+    function updateNavStatus() {
+        questions.forEach((_, i) => {
+            const el = document.getElementById(`nav-${i}`);
+            el.classList.remove('answered', 'doubt');
+            if (doubtStatus[i]) el.classList.add('doubt');
+            else if (userAns[i] !== null) el.classList.add('answered');
+        });
+    }
+
+    function nav(step) {
+        let target = current + step;
+        if (target >= 0 && target < questions.length) {
+            current = target;
+            loadSoal();
         }
+    }
 
-        function renderNavGrid() {
-            const grid = document.getElementById('nav-grid');
-            grid.innerHTML = '';
-            questions.forEach((_, i) => {
-                const item = document.createElement('div');
-                item.className = 'grid-item';
-                item.id = `nav-${i}`;
-                item.innerText = i + 1;
-                item.onclick = () => showQuestion(i);
-                grid.appendChild(item);
-            });
+    function jump(i) {
+        current = i;
+        loadSoal();
+    }
+
+    function startTimer() {
+        timerId = setInterval(() => {
+            time--;
+            let m = Math.floor(time / 60);
+            let s = time % 60;
+            document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' + s : s}`;
+            if (time <= 0) finishExam();
+        }, 1000);
+    }
+
+    function finishExam() {
+        if (!confirm("Sudah yakin dengan semua jawaban? Ujian akan diakhiri.")) return;
+        
+        clearInterval(timerId);
+        let score = 0;
+        userAns.forEach((ans, i) => {
+            if (ans === questions[i].a) score += 5;
+        });
+
+        document.getElementById('exam-ui').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('res-score').innerText = score;
+
+        const badge = document.getElementById('res-badge');
+        if (score >= 65) {
+            badge.innerText = "LULUS";
+            badge.className = "badge lulus";
+            document.getElementById('res-msg').innerText = "Selamat! Anda Memenuhi Ambang Batas";
+        } else {
+            badge.innerText = "TIDAK LULUS";
+            badge.className = "badge gagal";
+            document.getElementById('res-msg').innerText = "Maaf, Anda Belum Memenuhi Ambang Batas";
         }
+    }
 
-        function showQuestion(idx) {
-            currentQuestion = idx;
-            const q = questions[idx];
+    function showReview() {
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('review-screen').style.display = 'block';
+        
+        const container = document.getElementById('review-container');
+        container.innerHTML = '';
+        
+        questions.forEach((q, i) => {
+            const item = document.createElement('div');
+            item.className = 'review-item';
             
-            // Header No
-            document.getElementById('q-number-title').innerText = `Soal No. ${idx + 1}`;
-            
-            // Text Soal
-            document.getElementById('q-text').innerText = q.question;
-            
-            // Opsi
-            const optContainer = document.getElementById('options-container');
-            optContainer.innerHTML = '';
-            q.options.forEach((opt, i) => {
-                const div = document.createElement('div');
-                div.className = `option ${userAnswers[idx] === i ? 'selected' : ''}`;
-                div.onclick = () => selectOption(i);
-                div.innerHTML = `<span class="option-label">${String.fromCharCode(65 + i)}.</span> <span>${opt}</span>`;
-                optContainer.appendChild(div);
-            });
+            let statusText = "";
+            if (userAns[i] === null) statusText = "<span style='color:orange'>Tidak Dijawab</span>";
+            else if (userAns[i] === q.a) statusText = "<span style='color:green'>Benar</span>";
+            else statusText = "<span style='color:red'>Salah</span>";
 
-            // Update Grid Active
-            document.querySelectorAll('.grid-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`nav-${idx}`).classList.add('active');
-        }
+            item.innerHTML = `
+                <p><strong>Soal ${i + 1}:</strong> ${q.q}</p>
+                <p>Jawaban Anda: <strong>${userAns[i] !== null ? String.fromCharCode(65 + userAns[i]) : "-"}</strong> (${statusText})</p>
+                <p>Kunci Jawaban: <strong class="correct">${String.fromCharCode(65 + q.a)}</strong></p>
+            `;
+            container.appendChild(item);
+        });
+    }
 
-        function selectOption(optIdx) {
-            userAnswers[currentQuestion] = optIdx;
-            updateStatus();
-            showQuestion(currentQuestion);
-        }
-
-        function toggleDoubt() {
-            doubts[currentQuestion] = !doubts[currentQuestion];
-            updateStatus();
-        }
-
-        function updateStatus() {
-            const gridItem = document.getElementById(`nav-${currentQuestion}`);
-            gridItem.className = 'grid-item active';
-            
-            if (doubts[currentQuestion]) {
-                gridItem.classList.add('doubt');
-            } else if (userAnswers[currentQuestion] !== null) {
-                gridItem.classList.add('answered');
-            }
-        }
-
-        function changeQuestion(step) {
-            let next = currentQuestion + step;
-            if (next >= 0 && next < questions.length) {
-                showQuestion(next);
-            }
-        }
-
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                let m = Math.floor(timeLeft / 60);
-                let s = timeLeft % 60;
-                document.getElementById('timer-display').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    submitExam();
-                }
-            }, 1000);
-        }
-
-        function confirmSubmit() {
-            if (confirm("Apakah Anda yakin ingin mengakhiri ujian?")) {
-                submitExam();
-            }
-        }
-
-        function submitExam() {
-            clearInterval(timerInterval);
-            document.getElementById('exam-header').style.display = 'none';
-            document.getElementById('exam-container').style.display = 'none';
-            
-            let correctCount = 0;
-            userAnswers.forEach((ans, i) => {
-                if (ans === questions[i].answer) correctCount++;
-            });
-
-            const score = correctCount * 5;
-            document.getElementById('score-display').innerText = `Skor: ${score}`;
-            
-            const badge = document.getElementById('status-badge');
-            if (score >= 65) {
-                badge.innerText = "LULUS";
-                badge.className = "status-badge lulus";
-            } else {
-                badge.innerText = "TIDAK LULUS";
-                badge.className = "status-badge tidak-lulus";
-            }
-            
-            document.getElementById('result-page').style.display = 'block';
-        }
-
-        function showReview() {
-            document.getElementById('result-page').style.display = 'none';
-            document.getElementById('review-page').style.display = 'block';
-            
-            const list = document.getElementById('review-list');
-            list.innerHTML = '';
-            
-            questions.forEach((q, i) => {
-                const userAns = userAnswers[i] !== null ? String.fromCharCode(65 + userAnswers[i]) : "Tidak dijawab";
-                const correctAns = String.fromCharCode(65 + q.answer);
-                const isCorrect = userAnswers[i] === q.answer;
-
-                const div = document.createElement('div');
-                div.className = 'review-item';
-                div.innerHTML = `
-                    <p><strong>Soal ${i + 1}:</strong> ${q.question}</p>
-                    <p style="color: ${isCorrect ? 'green' : 'red'}">Jawaban Anda: ${userAns}</p>
-                    <p style="color: green">Jawaban Benar: ${correctAns}</p>
-                    <div class="explanation-box">
-                        <strong>Pembahasan:</strong><br>${q.explanation}
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        init();
-    </script>
+    init();
+</script>
 </body>
 </html>
